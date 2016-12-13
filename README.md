@@ -1,6 +1,8 @@
 # document-grapher
 Convert JSON from document-oriented DB to neo4j graph.
 
+This project is in BETA version, so it's absolutely no warranty.
+
 DocumentGrapher is a project for synchronization from document-oriented database to Neo4J.
 The goal is to allow graph analizes on documental data using Neo4j; documents are stored into Neo4j reusing existing nodes so we can analyze document relationships.
 Nowadays only exists the Couchbase connector, but the infrastructure can be connected with every source.
@@ -28,6 +30,9 @@ Not yet implemented. In version 1.0 will be possible to custumize these feauture
 # DCP connector
 couchbase-neo4j-connector is a standalone program that transfer mutation from Couchbase bucket to neo4j database.
 There is an implementation that use BOLT protocol to call neo4j-json procedures.
+
+**This project depends to dpc-client, in latest version (0.8.0) that can be download and install from [here](https://github.com/couchbaselabs/java-dcp-client).**
+
 To build couchbase-neo4j-connector you have to download source and run
 
 ```
