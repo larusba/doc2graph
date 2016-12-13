@@ -20,7 +20,7 @@ cp target/neo4j-json\*.jar ${NEO\_HOME}/plugins/
 ${NEO\_HOME}/bin/neo4j restart
 ```
 
-# Neo4h-json configuration
+# Neo4j-json configuration
 Not yet implemented. In version 1.0 will be possible to custumize these feautures:
 - document ID
 - relationships management
