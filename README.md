@@ -1,9 +1,9 @@
-# document-grapher
+# doc2graph
 Convert JSON from document-oriented DB to neo4j graph.
 
 This project is in BETA version, so it's absolutely no warranty.
 
-DocumentGrapher is a project for synchronization from document-oriented database to Neo4J.
+doc2graph is a project for synchronization from document-oriented database to Neo4J.
 The goal is to allow graph analizes on documental data using Neo4j; documents are stored into Neo4j reusing existing nodes so we can analyze document relationships.
 Nowadays only exists the Couchbase connector, but the infrastructure can be connected with every source.
 There is neo4j-json project that expose some procedures for digest JSON document via cypher query.
