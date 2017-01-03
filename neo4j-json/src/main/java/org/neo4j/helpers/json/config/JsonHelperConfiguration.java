@@ -37,7 +37,7 @@ public abstract class JsonHelperConfiguration {
 	 * @param log
 	 * @return
 	 */
-	public abstract DocumentGrapherExecutionContext newContext(GraphDatabaseService db, Log log);
+	protected abstract DocumentGrapherExecutionContext buildContext(GraphDatabaseService db, Log log);
 	
 	private static JsonHelperConfiguration instance;
 	
@@ -45,7 +45,7 @@ public abstract class JsonHelperConfiguration {
 	 * Get current configuration manager
 	 * @return
 	 */
-	public static JsonHelperConfiguration getInstance()
+	public static DocumentGrapherExecutionContext newContext(GraphDatabaseService db, Log log)
 	{
 		
 		if(instance == null)
@@ -54,6 +54,6 @@ public abstract class JsonHelperConfiguration {
 			instance = new JsonHelperConfigurationDefault();
 		}
 		
-		return instance;
+		return instance.buildContext(db, log);
 	}
 }

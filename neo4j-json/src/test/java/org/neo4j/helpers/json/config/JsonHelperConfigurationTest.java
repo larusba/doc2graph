@@ -44,15 +44,14 @@ public class JsonHelperConfigurationTest {
 	public Log log;
 
 	/**
-	 * Test method for {@link org.neo4j.helpers.json.config.JsonHelperConfiguration#newContext(org.neo4j.graphdb.GraphDatabaseService, org.neo4j.logging.Log)}.
+	 * Test method for {@link org.neo4j.helpers.json.config.JsonHelperConfiguration#buildContext(org.neo4j.graphdb.GraphDatabaseService, org.neo4j.logging.Log)}.
 	 */
 	@Test
 	public void testNewContext() {
 		replay(db,log);
-		JsonHelperConfiguration instance = JsonHelperConfiguration.getInstance();
-		DocumentGrapherExecutionContext ctx1 = instance.newContext(db, log);
+		DocumentGrapherExecutionContext ctx1 = JsonHelperConfiguration.newContext(db, log);
 		Assert.assertNotNull(ctx1);
-		DocumentGrapherExecutionContext ctx2 = instance.newContext(db, log);
+		DocumentGrapherExecutionContext ctx2 = JsonHelperConfiguration.newContext(db, log);
 		Assert.assertNotNull(ctx2);
 		
 		Assert.assertFalse("Configurazion must be renew",ctx1 == ctx2);
@@ -61,10 +60,9 @@ public class JsonHelperConfigurationTest {
 	@Test
 	public void testNewDocumentRelationBuilder() {
 		replay(db,log);
-		JsonHelperConfiguration instance = JsonHelperConfiguration.getInstance();
-		DocumentRelationBuilder ctx1 = instance.newContext(db, log).getDocumentRelationBuilder();
+		DocumentRelationBuilder ctx1 = JsonHelperConfiguration.newContext(db, log).getDocumentRelationBuilder();
 		Assert.assertNotNull(ctx1);
-		DocumentRelationBuilder ctx2 = instance.newContext(db, log).getDocumentRelationBuilder();
+		DocumentRelationBuilder ctx2 = JsonHelperConfiguration.newContext(db, log).getDocumentRelationBuilder();
 		Assert.assertNotNull(ctx2);
 		
 		Assert.assertFalse("DocumentRelationBuilder must be renew",ctx1 == ctx2);
@@ -74,10 +72,8 @@ public class JsonHelperConfigurationTest {
 	public void testConfiguration()
 	{
 		replay(db,log);
-		JsonHelperConfiguration instance = JsonHelperConfiguration.getInstance();
-		Assert.assertNotNull(instance);
 		
-		DocumentGrapherExecutionContext ctx1 = instance.newContext(db, log);
+		DocumentGrapherExecutionContext ctx1 = JsonHelperConfiguration.newContext(db, log);
 		Assert.assertNotNull(ctx1.getRootNodeKeyProperty());
 		Assert.assertNotNull(ctx1.getDb());
 		Assert.assertNotNull(ctx1.getLog());

@@ -56,7 +56,7 @@ public class JsonHelper {
 	private DocumentGrapher getDocumentGrapher()
 	{
 		//must be renew to avoid conflict in concurrent running
-		return new DocumentGrapherRecursive(JsonHelperConfiguration.getInstance().newContext(db, log)); 
+		return new DocumentGrapherRecursive(JsonHelperConfiguration.newContext(db, log)); 
 	}
 
 	/**

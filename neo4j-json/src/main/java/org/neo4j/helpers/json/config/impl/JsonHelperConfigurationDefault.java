@@ -37,7 +37,7 @@ public class JsonHelperConfigurationDefault extends JsonHelperConfiguration {
 	 * @see org.neo4j.helpers.json.config.JsonHelperConfiguration#newContext(org.neo4j.graphdb.GraphDatabaseService, org.neo4j.logging.Log)
 	 */
 	@Override
-	public DocumentGrapherExecutionContext newContext(GraphDatabaseService db, Log log) {
+	public DocumentGrapherExecutionContext buildContext(GraphDatabaseService db, Log log) {
 		DocumentGrapherExecutionContext context = new DocumentGrapherExecutionContext();
 		
 		context.setRootNodeKeyProperty("_document_key");
