@@ -16,37 +16,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.neo4j.helpers.json.document.impl;
 
 import java.util.Map;
 
-import org.neo4j.graphdb.Label;
-import org.neo4j.helpers.json.document.DocumentLabelBuilder;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 
 /**
- * Fixed label, ignore data and context
  * @author Omar Rampado
  *
  */
-public class DocumentLabelBuilderConstant implements DocumentLabelBuilder {
+public class DocumentIdTypeIdTest {
 
-	private Label label;
-
-	/* (non-Javadoc)
-	 * @see org.neo4j.helpers.json.document.DocumentLabelBuilder#buildLabel(java.util.Map)
+	DocumentIdTypeId docId;
+	
+	/**
+	 * @throws java.lang.Exception
 	 */
-	@Override
-	public Label buildLabel(Map<String,Object> obj) {
-		return this.label;
+	@Before
+	public void setUp() throws Exception {
+		this.docId = new DocumentIdTypeId("artist", 10);
 	}
 
 	/**
-	 * Configure label name
+	 * Test method for {@link org.neo4j.helpers.json.document.impl.DocumentIdTypeId#getFields()}.
 	 */
-	@Override
-	public void setDefaultLabel(String defaultLabel) {
-		this.label = Label.label(defaultLabel);
+	@Test
+	public void testGetFields() {
+		Map<String, String> fields = this.docId.getFields();
+		Assert.assertEquals("artist", fields.get(DocumentIdTypeId.TYPE));
+		Assert.assertEquals("10", fields.get(DocumentIdTypeId.ID));
+	}
+
+	/**
+	 * Test method for {@link org.neo4j.helpers.json.document.impl.DocumentIdTypeId#toCypherFilter()}.
+	 */
+	@Test
+	public void testToCypherFilter() {
+		String cypherFilter = this.docId.toCypherFilter();
+		Assert.assertEquals("id: 10, type: 'artist'", cypherFilter);
 	}
 
 }

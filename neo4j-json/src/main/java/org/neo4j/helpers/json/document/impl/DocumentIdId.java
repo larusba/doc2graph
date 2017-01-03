@@ -19,34 +19,60 @@
 
 package org.neo4j.helpers.json.document.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.neo4j.graphdb.Label;
-import org.neo4j.helpers.json.document.DocumentLabelBuilder;
+import org.neo4j.helpers.json.document.DocumentId;
 
 /**
- * Fixed label, ignore data and context
+ * DocumentId composed of single "id"
  * @author Omar Rampado
  *
  */
-public class DocumentLabelBuilderConstant implements DocumentLabelBuilder {
+public class DocumentIdId implements DocumentId {
 
-	private Label label;
-
-	/* (non-Javadoc)
-	 * @see org.neo4j.helpers.json.document.DocumentLabelBuilder#buildLabel(java.util.Map)
+	public static final String ID = "id";
+	
+	
+	private String id;
+	private Map<String, String> fields;
+	
+	/**
+	 * @param type
+	 * @param id
 	 */
-	@Override
-	public Label buildLabel(Map<String,Object> obj) {
-		return this.label;
+	public DocumentIdId(String id) {
+		super();
+		this.id = id;
+		this.fields = new HashMap<>(1);
+		this.fields.put(ID, this.id);
 	}
 
-	/**
-	 * Configure label name
+
+
+	/* (non-Javadoc)
+	 * @see org.neo4j.helpers.json.document.DocumentId#getFields()
 	 */
 	@Override
-	public void setDefaultLabel(String defaultLabel) {
-		this.label = Label.label(defaultLabel);
+	public Map<String, String> getFields() {
+		return this.fields;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see org.neo4j.helpers.json.document.DocumentId#toCypherFilter()
+	 */
+	@Override
+	public String toCypherFilter() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(ID);
+		sb.append(": '");
+		sb.append(this.id);		
+		sb.append("'");
+		
+		
+		return sb.toString();
 	}
 
 }

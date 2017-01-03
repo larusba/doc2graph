@@ -16,30 +16,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.neo4j.helpers.json.document;
+package org.neo4j.helpers.json.document.impl;
 
 import java.util.Map;
 
-import org.neo4j.graphdb.Label;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 
 /**
- * Builder for node Label
  * @author Omar Rampado
  *
  */
-public interface DocumentLabelBuilder {
+public class DocumentIdIdTest {
+
+	DocumentIdId docId;
+	
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		this.docId = new DocumentIdId("abc123");
+	}
 
 	/**
-	 * Choose label for the root object in map
-	 * @param obj
-	 * @return
+	 * Test method for {@link org.neo4j.helpers.json.document.impl.DocumentIdTypeId#getFields()}.
 	 */
-	Label buildLabel(Map<String, Object> obj);
+	@Test
+	public void testGetFields() {
+		Map<String, String> fields = this.docId.getFields();
+		Assert.assertEquals("abc123", fields.get(DocumentIdId.ID));
+	}
 
 	/**
-	 * Set default label if cannot be assigned at runtime
-	 * @param defaultLabel
+	 * Test method for {@link org.neo4j.helpers.json.document.impl.DocumentIdTypeId#toCypherFilter()}.
 	 */
-	void setDefaultLabel(String defaultLabel);
+	@Test
+	public void testToCypherFilter() {
+		String cypherFilter = this.docId.toCypherFilter();
+		Assert.assertEquals("id: 'abc123'", cypherFilter);
+	}
+
 }

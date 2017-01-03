@@ -17,29 +17,42 @@
  * limitations under the License.
  */
 
-package org.neo4j.helpers.json.document;
+package org.neo4j.helpers.json.document.impl;
 
 import java.util.Map;
 
 import org.neo4j.graphdb.Label;
+import org.neo4j.helpers.json.document.DocumentLabelBuilder;
 
 /**
- * Builder for node Label
+ * Build label from "type" property of node
  * @author Omar Rampado
+ * FIXME implement
  *
  */
-public interface DocumentLabelBuilder {
-
-	/**
-	 * Choose label for the root object in map
-	 * @param obj
-	 * @return
+public class DocumentLabelBuilderByType implements DocumentLabelBuilder {
+	
+	private String defaultLabel;
+	
+	/* (non-Javadoc)
+	 * @see org.neo4j.helpers.json.document.DocumentLabelBuilder#buildLabel(java.util.Map)
 	 */
-	Label buildLabel(Map<String, Object> obj);
+	@Override
+	public Label buildLabel(Map<String,Object> obj) {
+		String label = defaultLabel;
 
-	/**
-	 * Set default label if cannot be assigned at runtime
-	 * @param defaultLabel
-	 */
-	void setDefaultLabel(String defaultLabel);
+		Object type = obj.get("type");
+		if(type != null)
+		{
+			label = String.valueOf(type);
+		}
+		
+		return Label.label(label);
+	}
+
+	@Override
+	public void setDefaultLabel(String label) {
+		defaultLabel = label;
+	}
+
 }

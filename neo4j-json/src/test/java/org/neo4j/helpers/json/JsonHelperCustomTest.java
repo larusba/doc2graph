@@ -38,10 +38,11 @@ import org.neo4j.driver.v1.Values;
 import org.neo4j.harness.junit.Neo4jRule;
 
 /**
+ * Test with default configuration
  * @author Omar Rampado
  *
  */
-public class JsonHelperTest {
+public class JsonHelperCustomTest {
 
 	private static final String CALL_UPSERT = "CALL json.upsert({key},{json})";
 	private static final String CALL_DELETE = "CALL json.delete({key})";
@@ -77,6 +78,15 @@ public class JsonHelperTest {
 		//clean database
 		session.run("MATCH (n)-[r]->(o) DELETE n,r,o");
 		session.run("MATCH (n) DELETE n");
+		//set configuration
+		session.run("CREATE (n:JSON_CONFIG {"
+				+ "configuration: 'byNode'"
+				+ ",root_node_key_property:'_root'"
+				+ ",document_default_label:'DOCUMENT'"
+				+ ",document_id_builder:'org.neo4j.helpers.json.document.impl.DocumentIdBuilderId'"
+				+ ",document_relation_builder:'org.neo4j.helpers.json.document.impl.DocumentRelationBuilderTypeArrayKey'"
+				+ ",document_label_builder:'org.neo4j.helpers.json.document.impl.DocumentLabelBuilderConstant'"
+				+ "})");
 	}
 
 	/**
@@ -94,13 +104,13 @@ public class JsonHelperTest {
 	@Test
 	public void shouldAddOnlyOneNode() {
 		String key = "shouldAddOnlyOneNode";
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\""
 				+ "}";
 		
 		session.run(CALL_UPSERT, Values.parameters( "key", key, "json", json ));
-		StatementResult result = session.run("MATCH (n {id: 1, type: 'artist'}) RETURN n.name");
+		StatementResult result = session.run("MATCH (n {id: '1', type: 'artist'}) RETURN n.name");
 		Assert.assertEquals("Wrong node","Genesis", result.single().get("n.name").asString());
 		
 	}
@@ -122,7 +132,7 @@ public class JsonHelperTest {
 	@Test
 	public void shouldCreatePrimitiveArray() {
 		String key = "shouldAddOnlyOneNode";
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"members\": [\"Tony Banks\",\"Mike Rutherford\",\"Phil Collins\"],"
@@ -130,20 +140,20 @@ public class JsonHelperTest {
 				+ "}";
 		
 		session.run(CALL_UPSERT, Values.parameters( "key", key, "json", json ));
-		StatementResult result = session.run("MATCH (n {id: 1, type: 'artist'}) RETURN n.members");
+		StatementResult result = session.run("MATCH (n {id: '1', type: 'artist'}) RETURN n.members");
 		Assert.assertEquals("Wrong node","Tony Banks", result.single().get("n.members").asList().get(0));
 	}
 	
 	@Test
 	public void shouldCreateComplexArray1(){
 		String key = "shouldCreateComplexArray1";
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"albums\": ["
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 1,"
+				+ "               \"id\": \"10\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"From Genesis to Revelation\""
 				+ "             }"
@@ -161,27 +171,27 @@ public class JsonHelperTest {
 	
 	@Test
 	public void shouldCreateRelationKeys(){
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"albums\": ["
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 1,"
+				+ "               \"id\": \"10\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"FIRST From Genesis to Revelation\""
 				+ "             }"
 				+ "]"
 				+ "}";
 		
-		String json2 = "{\"id\": 2, "
+		String json2 = "{\"id\": \"2\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"King Crimson\","
 				//same album of Genesis
 				+ "\"albums\": ["
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 1,"
+				+ "               \"id\": \"10\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"From Genesis to Revelation\"" //change title
 				+ "             }"
@@ -214,19 +224,19 @@ public class JsonHelperTest {
 	@Test
 	public void shouldCreateComplexArray2(){
 		String key = "shouldCreateComplexArray2";
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"albums\": ["
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 1,"
+				+ "               \"id\": \"10\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"From Genesis to Revelation\""
 				+ "             },"
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 2,"
+				+ "               \"id\": \"20\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"John Anthony\""
 				+ "             }"
@@ -242,23 +252,23 @@ public class JsonHelperTest {
 	@Test
 	public void shouldUpdateValue() {
 		String key = "shouldUpdateValue";
-		String json1 = "{\"id\": 1, "
+		String json1 = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\""
 				+ "}";
 		
-		String json2 = "{\"id\": 1, "
+		String json2 = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"King Crimson\","
 				+ "\"bornYear\": 1969"
 				+ "}";
 		
 		session.run(CALL_UPSERT, Values.parameters( "key", key, "json", json1 ));
-		StatementResult result = session.run("MATCH (n {id: 1, type: 'artist'}) RETURN n.name");
+		StatementResult result = session.run("MATCH (n {id: '1', type: 'artist'}) RETURN n.name");
 		Assert.assertEquals("Wrong node","Genesis", result.single().get("n.name").asString());
 		
 		session.run(CALL_UPSERT, Values.parameters( "key", key, "json", json2 ));
-		StatementResult result2 = session.run("MATCH (n {id: 1, type: 'artist'}) RETURN n.name, n.bornYear");
+		StatementResult result2 = session.run("MATCH (n {id: '1', type: 'artist'}) RETURN n.name, n.bornYear");
 		Record single = result2.single();
 		Assert.assertEquals("Wrong node","King Crimson", single.get("n.name").asString());
 		Assert.assertEquals("Wrong node",1969, single.get("n.bornYear").asLong());
@@ -268,17 +278,17 @@ public class JsonHelperTest {
 	public void shouldUpdateOnlyOneNode() {
 		String key = "shouldUpdateOnlyOneNode";
 		
-		String json0 = "{\"id\": 0, "
+		String json0 = "{\"id\": \"0\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\""
 				+ "}";
 		
-		String json1 = "{\"id\": 1, "
-				+ "\"type\": \"artist\","
+		String json1 = "{\"id\": \"0\", "
+				+ "\"type\": \"other\","
 				+ "\"name\": \"Genesis\""
 				+ "}";
 		
-		String json2 = "{\"id\": 1, "
+		String json2 = "{\"id\": \"0\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"King Crimson\","
 				+ "\"bornYear\": 1969"
@@ -287,28 +297,25 @@ public class JsonHelperTest {
 		session.run(CALL_UPSERT, Values.parameters( "key", key+"_json0", "json", json0 ));
 		
 		session.run(CALL_UPSERT, Values.parameters( "key", key+"_json1", "json", json1 ));
-		StatementResult result = session.run("MATCH (n {id: 1, type: 'artist'}) RETURN n.name");
-		Assert.assertEquals("Wrong node","Genesis", result.single().get("n.name").asString());
+		StatementResult result = session.run("MATCH (n {id: '0'}) RETURN n.type");
+		Assert.assertEquals("Wrong node","other", result.single().get("n.type").asString());
 		
 		session.run(CALL_UPSERT, Values.parameters( "key", key+"_json2", "json", json2 ));
-		StatementResult result2 = session.run("MATCH (n {id: 1, type: 'artist'}) RETURN n.name, n.bornYear");
+		StatementResult result2 = session.run("MATCH (n {id: '0', type: 'artist'}) RETURN n.name, n.bornYear");
 		Record single = result2.single();
 		Assert.assertEquals("Wrong node","King Crimson", single.get("n.name").asString());
 		Assert.assertEquals("Wrong node",1969, single.get("n.bornYear").asLong());
-		
-		StatementResult result0 = session.run("MATCH (n {id: 0, type: 'artist'}) RETURN n.name");
-		Assert.assertEquals("Wrong node","Genesis", result0.single().get("n.name").asString());
 	}
 	
 	@Test
 	public void shouldAddNestedNode() {
 		String key = "shouldAddNestedNode";
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"origin\": {"
 				+ "              \"type\": \"origin\","
-				+ "              \"id\": 1483,"
+				+ "              \"id\": \"1483\","
 				+ "              \"sovereign-state\": \"UK\","
 				+ "              \"country\": \"England\","				
 				+ "              \"region\": \"South East\""
@@ -317,22 +324,22 @@ public class JsonHelperTest {
 		
 		session.run(CALL_UPSERT, Values.parameters( "key", key, "json", json ));
 		
-		StatementResult result = session.run("MATCH (n {id: 1, type: 'artist'}) RETURN n.name");
+		StatementResult result = session.run("MATCH (n {id: '1', type: 'artist'}) RETURN n.name");
 		Assert.assertEquals("Wrong node","Genesis", result.single().get("n.name").asString());
 		
-		StatementResult result1 = session.run("MATCH (n {id: 1483, type: 'origin'}) RETURN n.country");
+		StatementResult result1 = session.run("MATCH (n {id: '1483', type: 'origin'}) RETURN n.country");
 		Assert.assertEquals("Wrong inner node","England", result1.single().get("n.country").asString());
 	}
 	
 	@Test
 	public void shouldCreateRelation() {
 		String key = "shouldCreateRelation";
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"origin\": {"
 				+ "              \"type\": \"origin\","
-				+ "              \"id\": 1483,"
+				+ "              \"id\": \"1483\","
 				+ "              \"sovereign-state\": \"UK\","
 				+ "              \"country\": \"England\","				
 				+ "              \"region\": \"South East\""
@@ -341,7 +348,7 @@ public class JsonHelperTest {
 		
 		session.run(CALL_UPSERT, Values.parameters( "key", key, "json", json ));
 		
-		StatementResult result = session.run("MATCH (a {id: 1, type: 'artist'}) - [r] -> (o) RETURN a.name, o.country,r");
+		StatementResult result = session.run("MATCH (a {id: '1', type: 'artist'}) - [r] -> (o) RETURN a.name, o.country,r");
 		Record single = result.single();
 		Assert.assertEquals("Wrong node","Genesis", single.get("a.name").asString());
 		Assert.assertEquals("Wrong inner node","England", single.get("o.country").asString());
@@ -351,18 +358,18 @@ public class JsonHelperTest {
 	@Test
 	public void shouldCreate2LevelRelation(){
 		String key = "shouldCreate2LevelRelation";
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"albums\": ["
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 1,"
+				+ "               \"id\": \"10\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"From Genesis to Revelation\","
 				+ "               \"tracks\": [{"
 				+ "                             \"type\": \"track\","
-				+ "                             \"id\": 1,"
+				+ "                             \"id\": \"100\","
 				+ "                             \"title\": \"Where the Sour Turns to Sweet\""
 				+ "                           }]"
 				+ "             }"
@@ -386,25 +393,25 @@ public class JsonHelperTest {
 	@Test
 	public void shouldDeleteNodeAndRelation(){
 		String key = "shouldDeleteNodeAndRelation";
-		String json1 = "{\"id\": 1, "
+		String json1 = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"albums\": ["
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 1,"
+				+ "               \"id\": \"10\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"From Genesis to Revelation\","
 				+ "               \"tracks\": [{"
 				+ "                             \"type\": \"track\","
-				+ "                             \"id\": 1,"
+				+ "                             \"id\": \"100\","
 				+ "                             \"title\": \"Where the Sour Turns to Sweet\""
 				+ "                           }]"
 				+ "             }"
 				+ "]"
 				+ "}";
 		
-		String json2 = "{\"id\": 1, "
+		String json2 = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"albums\": ["
@@ -428,18 +435,18 @@ public class JsonHelperTest {
 	@Test
 	public void shouldDeleteJson() {
 		String key = "shouldDeleteJson";
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"albums\": ["
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 1,"
+				+ "               \"id\": \"10\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"From Genesis to Revelation\","
 				+ "               \"tracks\": [{"
 				+ "                             \"type\": \"track\","
-				+ "                             \"id\": 1,"
+				+ "                             \"id\": \"100\","
 				+ "                             \"title\": \"Where the Sour Turns to Sweet\""
 				+ "                           }]"
 				+ "             }"
@@ -451,13 +458,13 @@ public class JsonHelperTest {
 		
 		session.run(CALL_DELETE, Values.parameters( "key", key));
 		StatementResult result = session.run("MATCH (n) RETURN n");
-		Assert.assertTrue(result.list().isEmpty());
+		Assert.assertEquals(1,result.list().size());//JSON_CONFIG
 	}
 	
 	@Test
 	public void shouldDeleteDocumentWihoutRelations() {
 		String key = "shouldDeleteDocumentWihoutRelations";
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\""
 				+ "}";
@@ -468,24 +475,24 @@ public class JsonHelperTest {
 		
 		session.run(CALL_DELETE, Values.parameters( "key", key));
 		StatementResult result = session.run("MATCH (n) RETURN n");
-		Assert.assertTrue(result.list().isEmpty());
+		Assert.assertEquals(1,result.list().size());//JSON_CONFIG
 	}
 	
 	@Test
 	public void shouldSetDocumentKey() {
 		String key = "shouldSetDocumentKey";
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"albums\": ["
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 1,"
+				+ "               \"id\": \"10\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"From Genesis to Revelation\","
 				+ "               \"tracks\": [{"
 				+ "                             \"type\": \"track\","
-				+ "                             \"id\": 1,"
+				+ "                             \"id\": \"100\","
 				+ "                             \"title\": \"Where the Sour Turns to Sweet\""
 				+ "                           }]"
 				+ "             }"
@@ -493,32 +500,32 @@ public class JsonHelperTest {
 				+ "}";
 		
 		session.run(CALL_UPSERT, Values.parameters( "key", key, "json", json ));
-		StatementResult result1 = session.run("MATCH (n {_document_key: 'shouldSetDocumentKey'}) RETURN n.type");
-		Assert.assertEquals("Wrong _document_key","artist", result1.single().get("n.type").asString());
+		StatementResult result1 = session.run("MATCH (n {_root: 'shouldSetDocumentKey'}) RETURN n.type");
+		Assert.assertEquals("Wrong _root","artist", result1.single().get("n.type").asString());
 
 	}
 	
 	@Test
 	public void shouldDeleteOneJson() {
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"albums\": ["
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 1,"
+				+ "               \"id\": \"10\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"From Genesis to Revelation\","
 				+ "               \"tracks\": [{"
 				+ "                             \"type\": \"track\","
-				+ "                             \"id\": 1,"
+				+ "                             \"id\": \"100\","
 				+ "                             \"title\": \"Where the Sour Turns to Sweet\""
 				+ "                           }]"
 				+ "             }"
 				+ "]"
 				+ "}";
 		
-		String json2 = "{\"id\": 2, "
+		String json2 = "{\"id\": \"2\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"King Crimson\""
 				+ "}";
@@ -531,43 +538,43 @@ public class JsonHelperTest {
 		
 		session.run(CALL_DELETE, Values.parameters( "key", "genesis"));
 		
-		StatementResult result = session.run("MATCH (n) RETURN n.name");
+		StatementResult result = session.run("MATCH (n:DOCUMENT) RETURN n.name");
 		Assert.assertEquals("King Crimson", result.single().get("n.name").asString());
 	}
 
 	@Test
 	public void shouldAddRelationKeys(){
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"albums\": ["
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 1,"
+				+ "               \"id\": \"10\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"From Genesis to Revelation\","
 				+ "               \"tracks\": [{"
 				+ "                             \"type\": \"track\","
-				+ "                             \"id\": 1,"
+				+ "                             \"id\": \"100\","
 				+ "                             \"title\": \"Where the Sour Turns to Sweet\""
 				+ "                           }]"
 				+ "             }"
 				+ "]"
 				+ "}";
 		
-		String json2 = "{\"id\": 2, "
+		String json2 = "{\"id\": \"2\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"King Crimson\","
 				//same album of Genesis
 				+ "\"albums\": ["
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 1,"
+				+ "               \"id\": \"10\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"From Genesis to Revelation\","
 				+ "               \"tracks\": [{"
 				+ "                             \"type\": \"track\","
-				+ "                             \"id\": 1,"
+				+ "                             \"id\": \"100\","
 				+ "                             \"title\": \"Where the Sour Turns to Sweet\""
 				+ "                           }]"
 				+ "             }"
@@ -589,37 +596,37 @@ public class JsonHelperTest {
 	
 	@Test
 	public void shouldDeleteRelationKey(){
-		String json = "{\"id\": 1, "
+		String json = "{\"id\": \"1\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"Genesis\","
 				+ "\"albums\": ["
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 1,"
+				+ "               \"id\": \"10\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"From Genesis to Revelation\","
 				+ "               \"tracks\": [{"
 				+ "                             \"type\": \"track\","
-				+ "                             \"id\": 1,"
+				+ "                             \"id\": \"100\","
 				+ "                             \"title\": \"Where the Sour Turns to Sweet\""
 				+ "                           }]"
 				+ "             }"
 				+ "]"
 				+ "}";
 		
-		String json2 = "{\"id\": 2, "
+		String json2 = "{\"id\": \"2\", "
 				+ "\"type\": \"artist\","
 				+ "\"name\": \"King Crimson\","
 				//same album of Genesis
 				+ "\"albums\": ["
 				+ "             {"
 				+ "               \"type\": \"album\","
-				+ "               \"id\": 1,"
+				+ "               \"id\": \"10\","
 				+ "               \"producer\": \"Jonathan King\","
 				+ "               \"title\": \"From Genesis to Revelation\","
 				+ "               \"tracks\": [{"
 				+ "                             \"type\": \"track\","
-				+ "                             \"id\": 1,"
+				+ "                             \"id\": \"100\","
 				+ "                             \"title\": \"Where the Sour Turns to Sweet\""
 				+ "                           }]"
 				+ "             }"

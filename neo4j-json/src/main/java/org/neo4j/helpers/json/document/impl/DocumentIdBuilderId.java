@@ -17,29 +17,36 @@
  * limitations under the License.
  */
 
-package org.neo4j.helpers.json.document;
+package org.neo4j.helpers.json.document.impl;
 
 import java.util.Map;
 
-import org.neo4j.graphdb.Label;
+import org.apache.commons.lang3.Validate;
+import org.neo4j.helpers.json.document.DocumentId;
+import org.neo4j.helpers.json.document.DocumentIdBuilder;
 
 /**
- * Builder for node Label
+ * Build {@link DocumentIdId}
  * @author Omar Rampado
  *
  */
-public interface DocumentLabelBuilder {
+public class DocumentIdBuilderId implements DocumentIdBuilder {
 
-	/**
-	 * Choose label for the root object in map
-	 * @param obj
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.neo4j.helpers.json.document.DocumentIdBuilder#buildId(java.util.Map)
 	 */
-	Label buildLabel(Map<String, Object> obj);
+	@Override
+	public DocumentId buildId(Map<String,Object> obj) {
+		Object idObj = obj.get(DocumentIdId.ID);
 
-	/**
-	 * Set default label if cannot be assigned at runtime
-	 * @param defaultLabel
-	 */
-	void setDefaultLabel(String defaultLabel);
+		Validate.notNull(idObj, "every object must have "+DocumentIdTypeId.ID+": "+obj);
+		
+		String id = String.valueOf(idObj);
+		
+		return new DocumentIdId(id);
+	}
+
 }

@@ -18,7 +18,7 @@
  */
 package org.neo4j.helpers.json.config;
 
-import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.*;
 import static org.easymock.EasyMock.replay;
 
 import org.easymock.EasyMockRunner;
@@ -30,12 +30,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.Node;
 import org.neo4j.helpers.json.document.DocumentRelationBuilder;
 import org.neo4j.helpers.json.document.context.DocumentGrapherExecutionContext;
-import org.neo4j.helpers.json.document.impl.DocumentIdBuilderId;
-import org.neo4j.helpers.json.document.impl.DocumentLabelBuilderByType;
-import org.neo4j.helpers.json.document.impl.DocumentRelationBuilderByKey;
+import org.neo4j.helpers.json.document.impl.DocumentIdBuilderTypeId;
+import org.neo4j.helpers.json.document.impl.DocumentLabelBuilderConstant;
+import org.neo4j.helpers.json.document.impl.DocumentRelationBuilderTypeArrayKey;
 import org.neo4j.logging.Log;
 
 /**
@@ -43,30 +42,21 @@ import org.neo4j.logging.Log;
  *
  */
 @RunWith(EasyMockRunner.class)
-public class JsonHelperConfigurationTest {
+public class JsonHelperConfigurationDefaultTest {
 
 	@Mock(type=MockType.NICE)
-	GraphDatabaseService db;
+	public GraphDatabaseService db;
 
 	@Mock(type=MockType.NICE)
-	Log log;
-	
-	@Mock(type=MockType.NICE)
-	Node confNode;
+	public Log log;
 	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		expect(confNode.getProperty("configuration")).andStubReturn("byNode");
-		expect(confNode.getProperty("root_node_key_property")).andStubReturn("_root_");
-		expect(confNode.getProperty("document_id_builder")).andStubReturn("org.neo4j.helpers.json.document.impl.DocumentIdBuilderId");
-		expect(confNode.getProperty("document_relation_builder")).andStubReturn("org.neo4j.helpers.json.document.impl.DocumentRelationBuilderByKey");
-		expect(confNode.getProperty("document_label_builder")).andStubReturn("org.neo4j.helpers.json.document.impl.DocumentLabelBuilderByType");		
-		
-		expect(db.findNode(Label.label("JSON_CONFIG"), "configuration", "byNode")).andReturn(confNode);
-		replay(db,log, confNode);
+		expect(db.findNode(Label.label("JSON_CONFIG"), "configuration", "byNode")).andReturn(null);
+		replay(db,log);
 	}
 	
 
@@ -97,14 +87,25 @@ public class JsonHelperConfigurationTest {
 	@Test
 	public void testConfiguration()
 	{
-		DocumentGrapherExecutionContext ctx = JsonHelperConfiguration.newContext(db, log);
-		Assert.assertTrue(ctx.getDb() == db);
-		Assert.assertTrue(ctx.getLog() == log);
-		Assert.assertEquals("_root_",ctx.getRootNodeKeyProperty());
-		Assert.assertTrue(ctx.getDocumentIdBuilder() instanceof DocumentIdBuilderId);
-		Assert.assertTrue(ctx.getDocumentRelationBuilder() instanceof DocumentRelationBuilderByKey);
-		Assert.assertTrue(ctx.getDocumentLabelBuilder() instanceof DocumentLabelBuilderByType);
+		DocumentGrapherExecutionContext ctx1 = JsonHelperConfiguration.newContext(db, log);
+		Assert.assertNotNull(ctx1.getRootNodeKeyProperty());
+		Assert.assertNotNull(ctx1.getDb());
+		Assert.assertNotNull(ctx1.getLog());
+		Assert.assertNotNull(ctx1.getDocumentIdBuilder());
+		Assert.assertNotNull(ctx1.getDocumentLabelBuilder());
+		Assert.assertNotNull(ctx1.getDocumentRelationBuilder());
 	}
 	
-	
+	@Test
+	public void testConfigurationType()
+	{
+		DocumentGrapherExecutionContext ctx = JsonHelperConfiguration.newContext(db, log);
+		
+		Assert.assertTrue(ctx.getDb() == db);
+		Assert.assertTrue(ctx.getLog() == log);
+		Assert.assertEquals("_document_key",ctx.getRootNodeKeyProperty());
+		Assert.assertTrue(ctx.getDocumentIdBuilder() instanceof DocumentIdBuilderTypeId);
+		Assert.assertTrue(ctx.getDocumentLabelBuilder() instanceof DocumentLabelBuilderConstant);
+		Assert.assertTrue(ctx.getDocumentRelationBuilder() instanceof DocumentRelationBuilderTypeArrayKey);
+	}
 }

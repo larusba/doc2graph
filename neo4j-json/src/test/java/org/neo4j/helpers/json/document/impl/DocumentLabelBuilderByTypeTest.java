@@ -16,37 +16,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.neo4j.helpers.json.document.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.neo4j.graphdb.Label;
-import org.neo4j.helpers.json.document.DocumentLabelBuilder;
+
 
 /**
- * Fixed label, ignore data and context
  * @author Omar Rampado
  *
  */
-public class DocumentLabelBuilderConstant implements DocumentLabelBuilder {
+public class DocumentLabelBuilderByTypeTest {
 
-	private Label label;
-
-	/* (non-Javadoc)
-	 * @see org.neo4j.helpers.json.document.DocumentLabelBuilder#buildLabel(java.util.Map)
+	DocumentLabelBuilderByType builder;
+	
+	/**
+	 * @throws java.lang.Exception
 	 */
-	@Override
-	public Label buildLabel(Map<String,Object> obj) {
-		return this.label;
+	@Before
+	public void setUp() throws Exception {
+		builder = new DocumentLabelBuilderByType();
 	}
 
 	/**
-	 * Configure label name
+	 * Test method for {@link org.neo4j.helpers.json.document.impl.DocumentLabelBuilderByType#buildLabel(java.util.Map)}.
 	 */
-	@Override
-	public void setDefaultLabel(String defaultLabel) {
-		this.label = Label.label(defaultLabel);
+	@Test
+	public void testBuildLabel() {
+		builder.setDefaultLabel("NODE");
+		Map<String, Object> map = new HashMap<>();
+		map.put("type", "artist");
+		Label label = builder.buildLabel(map);
+		Assert.assertEquals("artist", label.name());
 	}
 
+	@Test
+	public void testBuildLabelDefault() {
+		builder.setDefaultLabel("NODE");
+		Map<String, Object> map = new HashMap<>();
+		map.put("id", "artist");
+		Label label = builder.buildLabel(map);
+		Assert.assertEquals("NODE", label.name());
+	}
 }

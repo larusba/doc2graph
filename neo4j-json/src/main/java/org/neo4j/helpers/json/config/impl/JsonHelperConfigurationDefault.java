@@ -29,7 +29,7 @@ import org.neo4j.logging.Log;
 /**
  * Default configuration
  * @author Omar Rampado
- *
+ * FIXME rename 
  */
 public class JsonHelperConfigurationDefault extends JsonHelperConfiguration {
 
@@ -48,7 +48,9 @@ public class JsonHelperConfigurationDefault extends JsonHelperConfiguration {
 		relBuilder.setLog(log);
 		
 		context.setDocumentRelationBuilder(relBuilder);
-		context.setDocumentLabelBuilder(new DocumentLabelBuilderConstant("DocNode"));
+		DocumentLabelBuilderConstant documentLabelBuilder = new DocumentLabelBuilderConstant();
+		documentLabelBuilder.setDefaultLabel("DocNode");
+		context.setDocumentLabelBuilder(documentLabelBuilder);
 		context.setDb(db);
 		context.setLog(log);
 		

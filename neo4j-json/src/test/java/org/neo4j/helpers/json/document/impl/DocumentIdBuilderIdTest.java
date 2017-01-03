@@ -17,29 +17,39 @@
  * limitations under the License.
  */
 
-package org.neo4j.helpers.json.document;
+package org.neo4j.helpers.json.document.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.neo4j.graphdb.Label;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.neo4j.helpers.json.document.DocumentId;
 
-/**
- * Builder for node Label
- * @author Omar Rampado
- *
- */
-public interface DocumentLabelBuilder {
+public class DocumentIdBuilderIdTest {
 
-	/**
-	 * Choose label for the root object in map
-	 * @param obj
-	 * @return
-	 */
-	Label buildLabel(Map<String, Object> obj);
+	DocumentIdBuilderId builder;
+	
+	@Before
+	public void setUp() throws Exception {
+		this.builder = new DocumentIdBuilderId();
+	}
 
-	/**
-	 * Set default label if cannot be assigned at runtime
-	 * @param defaultLabel
-	 */
-	void setDefaultLabel(String defaultLabel);
+	@Test
+	public void testBuildId() {
+		Map<String, Object> map = new HashMap<>();
+		map.put("id", 12);
+		map.put("type", "artist");
+		DocumentId buildId = builder.buildId(map);
+		Assert.assertEquals("id: '12'", buildId.toCypherFilter());
+	}
+
+	
+	@Test(expected=NullPointerException.class)
+	public void testBuildIdNoId() {
+		Map<String, Object> map = new HashMap<>();
+		map.put("type", "artist");
+		builder.buildId(map);
+	}
 }

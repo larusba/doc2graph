@@ -21,9 +21,11 @@ package org.neo4j.helpers.json.document;
 
 import java.util.Set;
 
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.helpers.json.document.context.DocumentRelationContext;
+import org.neo4j.logging.Log;
 
 /**
  * Build relationships between parent and child nodes
@@ -47,4 +49,8 @@ public interface DocumentRelationBuilder {
 	 * @return the 'orphan' nodes
 	 */
 	Set<Node> deleteRelations(DocumentRelationContext context);
+
+	void setDb(GraphDatabaseService db);
+
+	void setLog(Log log);
 }

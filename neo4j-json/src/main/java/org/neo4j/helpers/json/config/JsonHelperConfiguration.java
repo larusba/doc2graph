@@ -19,7 +19,10 @@
 package org.neo4j.helpers.json.config;
 
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.Node;
 import org.neo4j.helpers.json.JsonHelper;
+import org.neo4j.helpers.json.config.impl.JsonHelperConfigurationByNode;
 import org.neo4j.helpers.json.config.impl.JsonHelperConfigurationDefault;
 import org.neo4j.helpers.json.document.context.DocumentGrapherExecutionContext;
 import org.neo4j.logging.Log;
@@ -50,8 +53,16 @@ public abstract class JsonHelperConfiguration {
 		
 		if(instance == null)
 		{
-			//TODO read by configuration
-			instance = new JsonHelperConfigurationDefault();
+			Node configurationNode = db.findNode(Label.label("JSON_CONFIG"), "configuration", "byNode");
+			if(configurationNode == null)
+			{
+				log.info("Load default configuration: "+JsonHelperConfigurationDefault.class);
+				instance = new JsonHelperConfigurationDefault();				
+			}else
+			{
+				log.info("Load configuration from node: "+JsonHelperConfigurationByNode.class);
+				instance = new JsonHelperConfigurationByNode(configurationNode);	
+			}
 		}
 		
 		return instance.buildContext(db, log);

@@ -80,6 +80,7 @@ public class JsonHelper {
 			} catch (IOException e) {
 				//FIXME throw exception
 				log.error("Error during parsing JSON: "+json,e);
+				e.printStackTrace();//FIXME remove
 			}
 			
 			getDocumentGrapher().upsertDocument(key, map);
@@ -87,6 +88,7 @@ public class JsonHelper {
 		}catch(Exception e)
 		{
 			log.error("Error with key: "+key,e);
+			e.printStackTrace();//FIXME remove
 			//FIXME throw exception
 		}
 		
