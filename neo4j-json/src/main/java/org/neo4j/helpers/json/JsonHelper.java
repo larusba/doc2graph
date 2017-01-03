@@ -27,12 +27,9 @@ import java.util.stream.Stream;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.helpers.json.config.JsonHelperConfiguration;
 import org.neo4j.helpers.json.document.DocumentGrapher;
-import org.neo4j.helpers.json.document.context.DocumentGrapherExecutionContext;
 import org.neo4j.helpers.json.document.impl.DocumentGrapherRecursive;
-import org.neo4j.helpers.json.document.impl.DocumentIdBuilderTypeId;
-import org.neo4j.helpers.json.document.impl.DocumentLabelBuilderConstant;
-import org.neo4j.helpers.json.document.impl.DocumentRelationBuilderTypeArrayKey;
 import org.neo4j.logging.Log;
 import org.neo4j.procedure.Context;
 import org.neo4j.procedure.Name;
@@ -42,7 +39,7 @@ import org.neo4j.procedure.Procedure;
 /**
  * Procedures to convert Json document to nodes and relationships
  * @author Omar Rampado
- *
+ * FIXME rename because JsonHelper already exists into neo4j class tree
  */
 public class JsonHelper {
 
@@ -52,33 +49,14 @@ public class JsonHelper {
 	@Context
 	public Log log;
 
-	protected DocumentGrapherExecutionContext getConfiguration()
-	{
-		DocumentGrapherExecutionContext context = new DocumentGrapherExecutionContext();
-		
-		context.setRootNodeKeyProperty("_document_key");
-		context.setDocumentIdBuilder(new DocumentIdBuilderTypeId());
-		
-		DocumentRelationBuilderTypeArrayKey relBuilder = new DocumentRelationBuilderTypeArrayKey();
-		relBuilder.setDb(db);
-		relBuilder.setLog(log);
-		
-		context.setDocumentRelationBuilder(relBuilder);
-		context.setDocumentLabelBuilder(new DocumentLabelBuilderConstant("DocNode"));
-		context.setDb(db);
-		context.setLog(log);
-		
-		return context;
-	}
-	
 	/**
 	 * Get implementation of grapher 
 	 * @return
 	 */
 	private DocumentGrapher getDocumentGrapher()
 	{
-		//must be renew to avoid conflict in concurrent
-		return new DocumentGrapherRecursive(getConfiguration()); 
+		//must be renew to avoid conflict in concurrent running
+		return new DocumentGrapherRecursive(JsonHelperConfiguration.getInstance().newContext(db, log)); 
 	}
 
 	/**
