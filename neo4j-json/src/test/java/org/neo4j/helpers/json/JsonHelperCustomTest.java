@@ -20,6 +20,7 @@
 package org.neo4j.helpers.json;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -36,6 +37,7 @@ import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Values;
 import org.neo4j.harness.junit.Neo4jRule;
+import org.neo4j.helpers.json.config.JsonHelperConfiguration;
 
 /**
  * Test with default configuration
@@ -57,6 +59,7 @@ public class JsonHelperCustomTest {
 
 	@BeforeClass
 	public static void init() {
+		JsonHelperConfiguration.reset();
 		driver = GraphDatabase.driver(neo4j.boltURI(),
 				Config.build()
 				.withEncryptionLevel(Config.EncryptionLevel.NONE)
@@ -84,7 +87,7 @@ public class JsonHelperCustomTest {
 				+ ",root_node_key_property:'_root'"
 				+ ",document_default_label:'DOCUMENT'"
 				+ ",document_id_builder:'org.neo4j.helpers.json.document.impl.DocumentIdBuilderId'"
-				+ ",document_relation_builder:'org.neo4j.helpers.json.document.impl.DocumentRelationBuilderTypeArrayKey'"
+				+ ",document_relation_builder:'org.neo4j.helpers.json.document.impl.DocumentRelationBuilderByKey'"  
 				+ ",document_label_builder:'org.neo4j.helpers.json.document.impl.DocumentLabelBuilderConstant'"
 				+ "})");
 	}
@@ -165,7 +168,7 @@ public class JsonHelperCustomTest {
 		Record single = result.single();
 		Assert.assertEquals("Wrong node","Genesis", single.get("art.name").asString());
 		Assert.assertEquals("Wrong inner node","From Genesis to Revelation", single.get("alb.title").asString());
-		Assert.assertEquals("Wrong inner node","artist_album", single.get("r").asRelationship().type());
+		Assert.assertEquals("Wrong inner node","shouldCreateComplexArray1", single.get("r").asRelationship().type());
 
 	}
 	
@@ -201,24 +204,20 @@ public class JsonHelperCustomTest {
 		session.run(CALL_UPSERT, Values.parameters( "key", "genesis", "json", json ));
 		session.run(CALL_UPSERT, Values.parameters( "key", "kingcrimson", "json", json2 ));
 		
-		StatementResult result = session.run("MATCH (art {type: 'artist'}) - [r] -> (alb {type: 'album'}) RETURN art.name, alb.title,r,r.docKeys");
+		StatementResult result = session.run("MATCH (art {type: 'artist'}) - [r] -> (alb {type: 'album'}) RETURN art.name, alb.title,r");
 		List<Record> list = result.list();
 		Assert.assertEquals(2, list.size());
 		
 		Record genesis = list.get(0);
 		Assert.assertEquals("Wrong node","Genesis", genesis.get("art.name").asString());
 		Assert.assertEquals("Wrong inner node","From Genesis to Revelation", genesis.get("alb.title").asString());
-		Assert.assertEquals("Wrong inner node","artist_album", genesis.get("r").asRelationship().type());
-		Assert.assertEquals("docKeys errato",1, genesis.get("r.docKeys").asList().size());
+		Assert.assertEquals("Wrong inner node","genesis", genesis.get("r").asRelationship().type());
 
 		Record king = list.get(1);
 		Assert.assertEquals("Wrong node","King Crimson", king.get("art.name").asString());
 		Assert.assertEquals("Wrong inner node","From Genesis to Revelation", king.get("alb.title").asString());
-		Assert.assertEquals("Wrong inner node","artist_album", king.get("r").asRelationship().type());
-		Assert.assertEquals("docKeys errato",1, king.get("r.docKeys").asList().size());
+		Assert.assertEquals("Wrong inner node","kingcrimson", king.get("r").asRelationship().type());
 		
-		Assert.assertTrue(genesis.get("r.docKeys").asList().contains("genesis"));
-		Assert.assertTrue(king.get("r.docKeys").asList().contains("kingcrimson"));
 	}
 	
 	@Test
@@ -352,7 +351,7 @@ public class JsonHelperCustomTest {
 		Record single = result.single();
 		Assert.assertEquals("Wrong node","Genesis", single.get("a.name").asString());
 		Assert.assertEquals("Wrong inner node","England", single.get("o.country").asString());
-		Assert.assertEquals("Wrong inner node","artist_origin", single.get("r").asRelationship().type());
+		Assert.assertEquals("Wrong inner node","shouldCreateRelation", single.get("r").asRelationship().type());
 	}
 
 	@Test
@@ -381,13 +380,13 @@ public class JsonHelperCustomTest {
 		Record single = result.single();
 		Assert.assertEquals("Wrong node","Genesis", single.get("art.name").asString());
 		Assert.assertEquals("Wrong inner node","From Genesis to Revelation", single.get("alb.title").asString());
-		Assert.assertEquals("Wrong inner node","artist_album", single.get("r").asRelationship().type());
+		Assert.assertEquals("Wrong inner node","shouldCreate2LevelRelation", single.get("r").asRelationship().type());
 		
 		StatementResult result1 = session.run("MATCH (alb {type: 'album'}) - [r] -> (tra {type: 'track'}) RETURN alb.title, tra.title,r");
 		Record single1 = result1.single();
 		Assert.assertEquals("Wrong album node","From Genesis to Revelation", single1.get("alb.title").asString());
 		Assert.assertEquals("Wrong track node","Where the Sour Turns to Sweet", single1.get("tra.title").asString());
-		Assert.assertEquals("Wrong inner node","album_track", single1.get("r").asRelationship().type());
+		Assert.assertEquals("Wrong inner node","shouldCreate2LevelRelation", single1.get("r").asRelationship().type());
 	}
 	
 	@Test
@@ -584,14 +583,13 @@ public class JsonHelperCustomTest {
 		session.run(CALL_UPSERT, Values.parameters( "key", "genesis", "json", json ));
 		session.run(CALL_UPSERT, Values.parameters( "key", "kingcrimson", "json", json2 ));
 		
-		StatementResult result = session.run("MATCH (alb {type: 'album'}) - [r] -> (tra {type: 'track'}) RETURN alb.title, tra.title,r,r.docKeys");
+		StatementResult result = session.run("MATCH (alb {type: 'album'}) - [r] -> (tra {type: 'track'}) RETURN alb.title, tra.title,r,type(r)");
 		List<Record> list = result.list();
-		Assert.assertEquals(1, list.size());
+		Assert.assertEquals(2, list.size());
 		
-		Record fromGenesis = list.get(0);
-		
-		Assert.assertTrue(fromGenesis.get("r.docKeys").asList().contains("genesis"));
-		Assert.assertTrue(fromGenesis.get("r.docKeys").asList().contains("kingcrimson"));
+		List<String> results = list.stream().map(n -> n.get("type(r)").asString()).collect(Collectors.toList());
+		Assert.assertTrue(results.contains("genesis"));
+		Assert.assertTrue(results.contains("kingcrimson"));
 	}
 	
 	@Test
@@ -635,15 +633,14 @@ public class JsonHelperCustomTest {
 		
 		session.run(CALL_UPSERT, Values.parameters( "key", "genesis", "json", json ));
 		session.run(CALL_UPSERT, Values.parameters( "key", "kingcrimson", "json", json2 ));
-		session.run(CALL_DELETE, Values.parameters( "key", "kingcrimson"));
+		session.run(CALL_DELETE, Values.parameters( "key", "genesis"));
 		
-		StatementResult result = session.run("MATCH (alb {type: 'album'}) - [r] -> (tra {type: 'track'}) RETURN alb.title, tra.title,r,r.docKeys");
+		StatementResult result = session.run("MATCH (alb {type: 'album'}) - [r] -> (tra {type: 'track'}) RETURN alb.title, tra.title,type(r)");
 		List<Record> list = result.list();
 		Assert.assertEquals(1, list.size());
 		
 		Record fromGenesis = list.get(0);
 		
-		Assert.assertTrue(fromGenesis.get("r.docKeys").asList().contains("genesis"));
-		Assert.assertFalse(fromGenesis.get("r.docKeys").asList().contains("kingcrimson"));
+		Assert.assertEquals("kingcrimson",fromGenesis.get("type(r)").asString());
 	}
 }

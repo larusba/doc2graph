@@ -36,6 +36,7 @@ import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Values;
 import org.neo4j.harness.junit.Neo4jRule;
+import org.neo4j.helpers.json.config.JsonHelperConfiguration;
 
 /**
  * Test with default configuration
@@ -57,6 +58,7 @@ public class JsonHelperDefaultTest {
 
 	@BeforeClass
 	public static void init() {
+		JsonHelperConfiguration.reset();
 		driver = GraphDatabase.driver(neo4j.boltURI(),
 				Config.build()
 				.withEncryptionLevel(Config.EncryptionLevel.NONE)

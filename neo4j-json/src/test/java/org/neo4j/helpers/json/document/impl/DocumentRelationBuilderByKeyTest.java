@@ -44,12 +44,12 @@ import org.neo4j.logging.Log;
  * @author Omar Rampado
  *
  */
-public class DocumentRelationBuilderTypeArrayKeyTest {
+public class DocumentRelationBuilderByKeyTest {
 
 	private static GraphDatabaseService db;
 	private static Log log;
 	private Transaction tx;
-	private DocumentRelationBuilderTypeArrayKey docrel;
+	private DocumentRelationBuilderByKey docrel;
 	private DocumentRelationContext context;
 	
 	@BeforeClass
@@ -75,7 +75,7 @@ public class DocumentRelationBuilderTypeArrayKeyTest {
 		
 		tx = db.beginTx();
 		
-		this.docrel = new DocumentRelationBuilderTypeArrayKey();
+		this.docrel = new DocumentRelationBuilderByKey();
 		this.docrel.setDb(db);
 		this.docrel.setLog(log);
 		context = new DocumentRelationContext();
@@ -102,16 +102,12 @@ public class DocumentRelationBuilderTypeArrayKeyTest {
 
 		Assert.assertEquals(parent.getId(), rel.getStartNode().getId());
 		Assert.assertEquals(child.getId(), rel.getEndNode().getId());
-		Assert.assertEquals("album_artist", rel.getType().name());
-		
-		String[] keys = (String[]) rel.getProperty("docKeys");
-		
-		Assert.assertEquals(1, keys.length);
-		Assert.assertEquals("key", keys[0]);
+		Assert.assertEquals("key", rel.getType().name());
+
 	}
 	
 	@Test
-	public void shuldUpdateRelation() {
+	public void shuldAddRelation() {
 		context.setDocumentKey("key1");
 		
 		Node parent = db.createNode();
@@ -125,13 +121,10 @@ public class DocumentRelationBuilderTypeArrayKeyTest {
 		context.setDocumentKey("key2");
 		Relationship rel2 = this.docrel.buildRelation(parent, child, context);
 		
-		Assert.assertEquals(rel1.getId(), rel2.getId());
+		Assert.assertNotEquals(rel1.getId(), rel2.getId());
 		
-		String[] keys = (String[]) rel2.getProperty("docKeys");
-
-		Assert.assertEquals(2, keys.length);
-		Assert.assertEquals("key1", keys[0]);
-		Assert.assertEquals("key2", keys[1]);
+		Assert.assertEquals("key1", rel1.getType().name());
+		Assert.assertEquals("key2", rel2.getType().name());
 	}
 	
 	@Test
@@ -149,34 +142,11 @@ public class DocumentRelationBuilderTypeArrayKeyTest {
 		
 		Assert.assertEquals(rel1.getId(), rel2.getId());
 		
-		String[] keys = (String[]) rel2.getProperty("docKeys");
-
-		Assert.assertEquals(1, keys.length);
-		Assert.assertEquals("key", keys[0]);
+		Assert.assertEquals("key", rel2.getType().name());
 	}
 	
 	@Test
 	public void shouldDeleteNothing()
-	{
-		context.setDocumentKey("key");
-		
-		Node parent = db.createNode();
-		parent.setProperty("type", "album");
-		
-		Node child = db.createNode();
-		child.setProperty("type", "artist");
-		
-		this.docrel.buildRelation(parent, child, context);
-		
-		context.setDocumentKey("another_key");
-		Set<Node> orphans = this.docrel.deleteRelations(context);
-		
-		Assert.assertEquals(0, orphans.size());
-		Assert.assertEquals(1, StreamSupport.stream(parent.getRelationships().spliterator(), false).count());
-	}
-	
-	@Test
-	public void shouldDeleteNodeWithoutRelation()
 	{
 		context.setDocumentKey("key");
 		
@@ -239,7 +209,7 @@ public class DocumentRelationBuilderTypeArrayKeyTest {
 	}
 	
 	@Test
-	public void shouldDeleteRelationsOfKey()
+	public void shouldDeleteOneRelations()
 	{
 		context.setDocumentKey("key");
 		
@@ -281,16 +251,106 @@ public class DocumentRelationBuilderTypeArrayKeyTest {
 		this.docrel.buildRelation(child, track, context);
 		
 		context.setDocumentKey("another_key");
-		Relationship rel = this.docrel.buildRelation(child, track, context);
+		this.docrel.buildRelation(child, track, context);
 		
 		Set<Node> orphans = this.docrel.deleteRelations(context);
 		
 		Assert.assertEquals(0, orphans.size());
 		Assert.assertEquals(1, StreamSupport.stream(parent.getRelationships().spliterator(), false).count());
 		Assert.assertEquals(1, StreamSupport.stream(child.getRelationships(Direction.OUTGOING).spliterator(), false).count());
+		
+	}
 	
-		String[] keys = (String[]) rel.getProperty("docKeys");
-		Assert.assertEquals(1, keys.length);
-		Assert.assertEquals("key", keys[0]);
+	@Test
+	public void shouldCreate3Relation()
+	{
+		context.setDocumentKey("key");
+		
+		Node parent = db.createNode();
+		parent.setProperty("type", "album");
+		
+		Node child = db.createNode();
+		child.setProperty("type", "artist");
+		
+		this.docrel.buildRelation(parent, child, context);
+
+		context.setDocumentKey("another_key");
+
+		Node track = db.createNode();
+		track.setProperty("type", "track");
+		this.docrel.buildRelation(parent, child, context);
+		this.docrel.buildRelation(child, track, context);
+		
+		Assert.assertEquals(2, StreamSupport.stream(parent.getRelationships().spliterator(), false).count());
+		Assert.assertEquals(1, StreamSupport.stream(child.getRelationships(Direction.OUTGOING).spliterator(), false).count());
+
+	}
+	
+	@Test
+	public void shouldSkipCreationWithoutKey()
+	{
+		context.setDocumentKey(null);
+		
+		Node parent = db.createNode();
+		parent.setProperty("type", "album");
+		
+		Node child = db.createNode();
+		child.setProperty("type", "artist");
+		
+		Relationship rel = this.docrel.buildRelation(parent, child, context);
+		
+		Assert.assertNull(rel);
+	}
+	
+	@Test
+	public void shouldSkipCreationWithEmptyKey()
+	{
+		context.setDocumentKey(" ");
+		
+		Node parent = db.createNode();
+		parent.setProperty("type", "album");
+		
+		Node child = db.createNode();
+		child.setProperty("type", "artist");
+		
+		Relationship rel = this.docrel.buildRelation(parent, child, context);
+		
+		Assert.assertNull(rel);
+	}
+	
+	@Test
+	public void shouldNotDeleteWithoutKey()
+	{
+		context.setDocumentKey("key");
+		
+		Node parent = db.createNode();
+		parent.setProperty("type", "album");
+		
+		Node child = db.createNode();
+		child.setProperty("type", "artist");
+		
+		this.docrel.buildRelation(parent, child, context);
+		
+		context.setDocumentKey(null);
+		Set<Node> orphans = this.docrel.deleteRelations(context);
+		Assert.assertTrue(orphans.isEmpty());
+	}
+	
+	@Test
+	public void shouldNotDeleteWithEmptyKey()
+	{
+		context.setDocumentKey("key");
+		
+		Node parent = db.createNode();
+		parent.setProperty("type", "album");
+		
+		Node child = db.createNode();
+		child.setProperty("type", "artist");
+		
+		this.docrel.buildRelation(parent, child, context);
+		
+		context.setDocumentKey(" ");
+		Set<Node> orphans = this.docrel.deleteRelations(context);
+		Assert.assertTrue(orphans.isEmpty());
 	}
 }

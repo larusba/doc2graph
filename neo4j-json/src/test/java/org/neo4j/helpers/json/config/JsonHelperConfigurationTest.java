@@ -59,6 +59,7 @@ public class JsonHelperConfigurationTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		JsonHelperConfiguration.reset();
 		expect(confNode.getProperty("configuration")).andStubReturn("byNode");
 		expect(confNode.getProperty("root_node_key_property")).andStubReturn("_root_");
 		expect(confNode.getProperty("document_id_builder")).andStubReturn("org.neo4j.helpers.json.document.impl.DocumentIdBuilderId");

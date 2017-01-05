@@ -55,6 +55,7 @@ public class JsonHelperConfigurationDefaultTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		JsonHelperConfiguration.reset();
 		expect(db.findNode(Label.label("JSON_CONFIG"), "configuration", "byNode")).andReturn(null);
 		replay(db,log);
 	}

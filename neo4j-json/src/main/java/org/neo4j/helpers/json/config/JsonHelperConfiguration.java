@@ -31,6 +31,7 @@ import org.neo4j.logging.Log;
  * Configuration manager for {@link JsonHelper}
  * @author Omar Rampado
  * FIXME rename according with the JsonHelper refactor
+ * TODO use threadlocal or other instead of (static) singleton
  */
 public abstract class JsonHelperConfiguration {
 
@@ -66,5 +67,10 @@ public abstract class JsonHelperConfiguration {
 		}
 		
 		return instance.buildContext(db, log);
+	}
+	
+	public static void reset()
+	{
+		instance = null;
 	}
 }
