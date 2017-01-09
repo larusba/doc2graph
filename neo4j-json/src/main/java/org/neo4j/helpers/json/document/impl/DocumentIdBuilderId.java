@@ -44,9 +44,7 @@ public class DocumentIdBuilderId implements DocumentIdBuilder {
 
 		Validate.notNull(idObj, "every object must have "+DocumentIdTypeId.ID+": "+obj);
 		
-		String id = String.valueOf(idObj);
-		
-		return new DocumentIdId(id);
+		return new DocumentIdId(idObj);
 	}
 
 }

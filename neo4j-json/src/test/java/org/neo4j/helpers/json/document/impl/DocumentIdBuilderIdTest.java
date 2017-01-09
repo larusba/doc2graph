@@ -42,7 +42,7 @@ public class DocumentIdBuilderIdTest {
 		map.put("id", 12);
 		map.put("type", "artist");
 		DocumentId buildId = builder.buildId(map);
-		Assert.assertEquals("id: '12'", buildId.toCypherFilter());
+		Assert.assertEquals("id: 12", buildId.toCypherFilter());
 	}
 
 	

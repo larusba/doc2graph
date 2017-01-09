@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.neo4j.helpers.json.document.DocumentId;
+import org.neo4j.helpers.json.document.utils.IdValueTypeSafe;
 
 /**
  * DocumentId composed of single "id"
@@ -34,18 +35,17 @@ public class DocumentIdId implements DocumentId {
 	public static final String ID = "id";
 	
 	
-	private String id;
+	private IdValueTypeSafe id;
 	private Map<String, String> fields;
 	
 	/**
-	 * @param type
 	 * @param id
 	 */
-	public DocumentIdId(String id) {
+	public DocumentIdId(Object id) {
 		super();
-		this.id = id;
+		this.id = new IdValueTypeSafe(id);
 		this.fields = new HashMap<>(1);
-		this.fields.put(ID, this.id);
+		this.fields.put(ID, this.id.toString());
 	}
 
 
@@ -67,10 +67,8 @@ public class DocumentIdId implements DocumentId {
 	public String toCypherFilter() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(ID);
-		sb.append(": '");
-		sb.append(this.id);		
-		sb.append("'");
-		
+		sb.append(": ");
+		sb.append(this.id.toCypher());		
 		
 		return sb.toString();
 	}

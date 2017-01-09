@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.neo4j.helpers.json.document.DocumentId;
+import org.neo4j.helpers.json.document.utils.IdValueTypeSafe;
 
 /**
  * DocumentId composed of "type" and "id"
@@ -35,21 +36,21 @@ public class DocumentIdTypeId implements DocumentId {
 	public static final String TYPE = "type";
 	
 	
-	private long id;
-	private String type;
+	private IdValueTypeSafe id;
+	private IdValueTypeSafe type;
 	private Map<String, String> fields;
 	
 	/**
 	 * @param type
 	 * @param id
 	 */
-	public DocumentIdTypeId(String type, long id) {
+	public DocumentIdTypeId(Object type, Object id) {
 		super();
-		this.type = type;
-		this.id = id;
+		this.type = new IdValueTypeSafe(type);
+		this.id = new IdValueTypeSafe(id);
 		this.fields = new HashMap<>(2);
-		this.fields.put(TYPE, this.type);
-		this.fields.put(ID, String.valueOf(this.id));
+		this.fields.put(TYPE, this.type.toString());
+		this.fields.put(ID, this.id.toString());
 	}
 
 
@@ -72,14 +73,13 @@ public class DocumentIdTypeId implements DocumentId {
 		StringBuilder sb = new StringBuilder();
 		sb.append(ID);
 		sb.append(": ");
-		sb.append(this.id);
+		sb.append(this.id.toCypher());
 		
 		sb.append(", ");
 		
 		sb.append(TYPE);
-		sb.append(": '");
-		sb.append(this.type);
-		sb.append("'");
+		sb.append(": ");
+		sb.append(this.type.toCypher());
 		
 		
 		return sb.toString();

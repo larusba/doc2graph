@@ -46,10 +46,7 @@ public class DocumentIdBuilderTypeId implements DocumentIdBuilder {
 		Validate.notNull(typeObj, "every object must have "+DocumentIdTypeId.TYPE+": "+obj);
 		Validate.notNull(idObj, "every object must have "+DocumentIdTypeId.ID+": "+obj);
 		
-		String type = String.valueOf(typeObj);
-		long id = Long.parseLong(String.valueOf(idObj));
-		
-		return new DocumentIdTypeId(type, id);
+		return new DocumentIdTypeId(typeObj, idObj);
 	}
 
 }
