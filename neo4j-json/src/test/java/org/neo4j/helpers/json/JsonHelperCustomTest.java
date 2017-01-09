@@ -88,7 +88,7 @@ public class JsonHelperCustomTest {
 				+ ",document_default_label:'DOCUMENT'"
 				+ ",document_id_builder:'org.neo4j.helpers.json.document.impl.DocumentIdBuilderId'"
 				+ ",document_relation_builder:'org.neo4j.helpers.json.document.impl.DocumentRelationBuilderByKey'"  
-				+ ",document_label_builder:'org.neo4j.helpers.json.document.impl.DocumentLabelBuilderConstant'"
+				+ ",document_label_builder:'org.neo4j.helpers.json.document.impl.DocumentLabelBuilderById'"
 				+ "})");
 	}
 
@@ -537,7 +537,7 @@ public class JsonHelperCustomTest {
 		
 		session.run(CALL_DELETE, Values.parameters( "key", "genesis"));
 		
-		StatementResult result = session.run("MATCH (n:DOCUMENT) RETURN n.name");
+		StatementResult result = session.run("MATCH (n:ID_2) RETURN n.name");
 		Assert.assertEquals("King Crimson", result.single().get("n.name").asString());
 	}
 

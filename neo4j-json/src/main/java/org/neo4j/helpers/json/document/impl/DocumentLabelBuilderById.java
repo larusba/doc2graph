@@ -30,7 +30,7 @@ import org.neo4j.helpers.json.document.DocumentLabelBuilder;
  * FIXME implement
  *
  */
-public class DocumentLabelBuilderByType implements DocumentLabelBuilder {
+public class DocumentLabelBuilderById implements DocumentLabelBuilder {
 	
 	private String defaultLabel;
 	
@@ -41,10 +41,10 @@ public class DocumentLabelBuilderByType implements DocumentLabelBuilder {
 	public Label buildLabel(Map<String,Object> obj) {
 		String label = defaultLabel;
 
-		Object type = obj.get("type");
+		Object type = obj.get("id");
 		if(type != null)
 		{
-			label = String.valueOf(type);
+			label = "ID_"+String.valueOf(type);
 		}
 		
 		return Label.label(label);

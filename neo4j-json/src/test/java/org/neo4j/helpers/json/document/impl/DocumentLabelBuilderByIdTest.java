@@ -31,35 +31,35 @@ import org.neo4j.graphdb.Label;
  * @author Omar Rampado
  *
  */
-public class DocumentLabelBuilderByTypeTest {
+public class DocumentLabelBuilderByIdTest {
 
-	DocumentLabelBuilderByType builder;
+	DocumentLabelBuilderById builder;
 	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		builder = new DocumentLabelBuilderByType();
+		builder = new DocumentLabelBuilderById();
 	}
 
 	/**
-	 * Test method for {@link org.neo4j.helpers.json.document.impl.DocumentLabelBuilderByType#buildLabel(java.util.Map)}.
+	 * Test method for {@link org.neo4j.helpers.json.document.impl.DocumentLabelBuilderById#buildLabel(java.util.Map)}.
 	 */
 	@Test
 	public void testBuildLabel() {
 		builder.setDefaultLabel("NODE");
 		Map<String, Object> map = new HashMap<>();
-		map.put("type", "artist");
+		map.put("id", "2");
 		Label label = builder.buildLabel(map);
-		Assert.assertEquals("artist", label.name());
+		Assert.assertEquals("ID_2", label.name());
 	}
 
 	@Test
 	public void testBuildLabelDefault() {
 		builder.setDefaultLabel("NODE");
 		Map<String, Object> map = new HashMap<>();
-		map.put("id", "artist");
+		map.put("type", "artist");
 		Label label = builder.buildLabel(map);
 		Assert.assertEquals("NODE", label.name());
 	}

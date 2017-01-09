@@ -34,7 +34,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.helpers.json.document.DocumentRelationBuilder;
 import org.neo4j.helpers.json.document.context.DocumentGrapherExecutionContext;
 import org.neo4j.helpers.json.document.impl.DocumentIdBuilderId;
-import org.neo4j.helpers.json.document.impl.DocumentLabelBuilderByType;
+import org.neo4j.helpers.json.document.impl.DocumentLabelBuilderById;
 import org.neo4j.helpers.json.document.impl.DocumentRelationBuilderByKey;
 import org.neo4j.logging.Log;
 
@@ -64,7 +64,7 @@ public class JsonHelperConfigurationTest {
 		expect(confNode.getProperty("root_node_key_property")).andStubReturn("_root_");
 		expect(confNode.getProperty("document_id_builder")).andStubReturn("org.neo4j.helpers.json.document.impl.DocumentIdBuilderId");
 		expect(confNode.getProperty("document_relation_builder")).andStubReturn("org.neo4j.helpers.json.document.impl.DocumentRelationBuilderByKey");
-		expect(confNode.getProperty("document_label_builder")).andStubReturn("org.neo4j.helpers.json.document.impl.DocumentLabelBuilderByType");		
+		expect(confNode.getProperty("document_label_builder")).andStubReturn("org.neo4j.helpers.json.document.impl.DocumentLabelBuilderById");		
 		
 		expect(db.findNode(Label.label("JSON_CONFIG"), "configuration", "byNode")).andReturn(confNode);
 		replay(db,log, confNode);
@@ -104,7 +104,7 @@ public class JsonHelperConfigurationTest {
 		Assert.assertEquals("_root_",ctx.getRootNodeKeyProperty());
 		Assert.assertTrue(ctx.getDocumentIdBuilder() instanceof DocumentIdBuilderId);
 		Assert.assertTrue(ctx.getDocumentRelationBuilder() instanceof DocumentRelationBuilderByKey);
-		Assert.assertTrue(ctx.getDocumentLabelBuilder() instanceof DocumentLabelBuilderByType);
+		Assert.assertTrue(ctx.getDocumentLabelBuilder() instanceof DocumentLabelBuilderById);
 	}
 	
 	
