@@ -1,78 +1,27 @@
 # doc2graph
-Convert JSON from document-oriented DB to neo4j graph.
+Convert JSON from document-oriented DB to [neo4j](https://neo4j.com/) graph.
 
-This project is in BETA version, so it's absolutely no warranty.
+This project is in BETA version, so it's **absolutely no warranty**.
 
-doc2graph is a project for synchronization from document-oriented database to Neo4J.
 The goal is to allow graph analizes on documental data using Neo4j; documents are stored into Neo4j reusing existing nodes so we can analyze document relationships.
-Nowadays only exists the Couchbase connector, but the infrastructure can be connected with every source.
-There is neo4j-json project that expose some procedures for digest JSON document via cypher query.
+The logic to convert JSON into a graph is stored into neo4j as procedures, so it can ben used from any kind of JSON source. 
+Furthermore, the logic is configurable and programmable: you can obtain exactly the graph you need for yours analysis.
 
-# Neo4j-json install
-Neo4j-json is a neo4j plugin, writed for version 3.0 or later, that create these procedures:
-- json.upsert({key},{json)
-- json.delete({key})
+# neo4j-json
+It's the core of `doc2graph` project. It's a neo4j's plugin and create some [procedure](http://neo4j.com/docs/developer-manual/current/extending-neo4j/procedures/) to call in cypher.
 
-These procedures can be called from cypher query and are indipendent from the source of json.
-To build the default configuration you have to download source and run
+# couchbase-neo4j-connector
+It's a java standalone process that synchronizes a [Couchbase](https://www.couchbase.com/) server to neo4j calling the `neo4j-json` procedures. It works as [DCP client](https://github.com/couchbaselabs/java-dcp-client).
 
-```
-mvn package
-cp target/neo4j-json\*.jar ${NEO\_HOME}/plugins/
-${NEO\_HOME}/bin/neo4j restart
-```
-
-# Neo4j-json configuration
-Not yet implemented. In version 1.0 will be possible to custumize these feautures:
-- document ID
-- relationships management
-
-# DCP connector
-couchbase-neo4j-connector is a standalone program that transfer mutation from Couchbase bucket to neo4j database.
-There is an implementation that use BOLT protocol to call neo4j-json procedures.
-
-**This project depends to dpc-client, in latest version (0.8.0) that can be download and install from [here](https://github.com/couchbaselabs/java-dcp-client).**
-
-To build couchbase-neo4j-connector you have to download source and run
-
-```
-mvn package
-```
-
-To run the connector 
-
-```
-java -jar couchbase-neo4j-connector -Dconf.file=dcp-configuration.properties
-```
-
-# DCP connector configuration
-To run the couchbase-neo4j-connector you must have a configuration file. You can find a prototype into source 'neo4j-sync.propeties'.
-Here's the content:
-
-```
-# Sync
-couchbase.bucket=cbnc\_test
-couchbase.hostname=localhost
-
-# Neo4j
-neo4j.hostname=localhost
-neo4j.username=neo4j
-neo4j.password=admin
-
-```
-
-Change with the right information and use it to run couchbase-neo4j-connector.
-
+# mongodb-neo4j-connector
+It's a python doc\_manager that synchronizes a [MongoDB](https://www.mongodb.com/) replica to neo4j calling the `neo4-json` procedures. It work as module of [mondogb-connector](https://github.com/mongodb-labs/mongo-connector/wiki/Writing%20Your%20Own%20DocManager).
 
 # Test
-TODO
-
-# Performance
-TODO
+Nowadays it works on MacBook with OSX 10.11, Couchbase 4.5 enterprise, MongoDB 3.4, Neo4j 3.0.
 
 ## License
 
-Copyright (c) 2016 [LARUS Business Automation](http://www.larus-ba.it)
+Copyright (c) 2017 [LARUS Business Automation](http://www.larus-ba.it)
 
 This file is part of the "LARUS Integration Framework for Neo4j".
 
