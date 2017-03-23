@@ -13,7 +13,7 @@ mvn package
 To run the connector 
 
 ```
-java -jar couchbase-neo4j-connector -Dconf.file=dcp-configuration.properties
+java -jar target/neo4j-connector-0.0.1-jar-with-dependencies.jar -Dconf.file=neo4j-sync.propeties
 ```
 
 # DCP connector configuration
