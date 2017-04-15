@@ -107,6 +107,23 @@ public class JsonHelperDefaultTest {
 		Assert.assertEquals("Wrong node","Genesis", result.single().get("n.name").asString());
 		
 	}
+
+	@Test
+	public void shouldNotDiscardForNull() {
+		String key = "shouldAddOnlyOneNode";
+		String json = "{\"id\": 1, "
+				+ "\"type\": \"artist\","
+				+ "\"name\": \"Genesis\","
+				+ "\"available_markets\" : [ ],"
+				+ "\"preview_url\" : null"
+				+ "}";
+		
+		session.run(CALL_UPSERT, Values.parameters( "key", key, "json", json ));
+		StatementResult result = session.run("MATCH (n {id: 1, type: 'artist'}) RETURN n.name");
+		Assert.assertEquals("Wrong node","Genesis", result.single().get("n.name").asString());
+		
+	}
+
 	
 	@Test
 	public void shouldDiscard() {

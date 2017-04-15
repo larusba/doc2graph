@@ -121,7 +121,11 @@ public class DocumentGrapherRecursive implements DocumentGrapher {
 		//set properties
 		final Node n = node;
 		
-		document.forEach((k, v) -> n.setProperty(k, v));
+		document.forEach((k, v) -> {
+			if(v != null){
+				n.setProperty(k, v);				
+			}
+		});
 		
 		DocumentRelationContext context = new DocumentRelationContext();
 		context.setDocumentKey(key);

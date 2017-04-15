@@ -21,15 +21,16 @@ package org.neo4j.helpers.json.document.impl;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.neo4j.graphdb.Label;
 import org.neo4j.helpers.json.document.DocumentLabelBuilder;
 
 /**
- * Build label from "id" property of node
+ * Build label from "type" property of node
  * @author Omar Rampado
  *
  */
-public class DocumentLabelBuilderById implements DocumentLabelBuilder {
+public class DocumentLabelBuilderByType implements DocumentLabelBuilder {
 	
 	private String defaultLabel;
 	
@@ -40,10 +41,13 @@ public class DocumentLabelBuilderById implements DocumentLabelBuilder {
 	public Label buildLabel(Map<String,Object> obj) {
 		String label = defaultLabel;
 
-		Object type = obj.get("id");
+		Object type = obj.get("type");
 		if(type != null)
 		{
-			label = "ID_"+String.valueOf(type);
+			label = String.valueOf(type);
+			label = WordUtils.capitalizeFully(label,'_',' ')
+					.replaceAll("_", "")
+					.replaceAll(" ", "");
 		}
 		
 		return Label.label(label);
