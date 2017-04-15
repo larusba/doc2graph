@@ -25,8 +25,9 @@ CREATE (n:JSON_CONFIG {
         ,root_node_key_property:'_document_key'
         ,document_default_label:'DocNode'
         ,document_id_builder:'org.neo4j.helpers.json.document.impl.DocumentIdBuilderTypeId'
-        ,document_relation_builder:'org.neo4j.helpers.json.document.impl.DocumentRelationBuilderTypeArrayKey'
-        ,document_label_builder:'org.neo4j.helpers.json.document.impl.DocumentLabelBuilderConstant'
+        ,document_relation_builder:'org.neo4j.helpers.json.document.impl.DocumentRelationBuilderHasTypeArrayKey'
+        ,document_label_builder:'org.neo4j.helpers.json.document.impl.DocumentLabelBuilderByType'
+		,log_discard_events: false
         })
 ```
 
@@ -59,6 +60,7 @@ It's the name of class that implements `org.neo4j.helpers.json.document.Document
 
 You can choose from:
 * `org.neo4j.helpers.json.document.impl.DocumentRelationBuilderTypeArrayKey`
+* `org.neo4j.helpers.json.document.impl.DocumentRelationBuilderHasTypeArrayKey`
 * `org.neo4j.helpers.json.document.impl.DocumentRelationBuilderByKey`
 * your own implementation
 
@@ -67,6 +69,7 @@ It's the name of class that implements `org.neo4j.helpers.json.document.Document
 
 You can choose from:
 * `org.neo4j.helpers.json.document.impl.DocumentLabelBuilderConstant`
+* `org.neo4j.helpers.json.document.impl.DocumentLabelBuilderByType`
 * `org.neo4j.helpers.json.document.impl.DocumentLabelBuilderById`
 * your own implementation
 

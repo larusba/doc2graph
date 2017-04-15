@@ -39,6 +39,10 @@ public class DocumentGrapherExecutionContext {
 	private DocumentRelationBuilder documentRelationBuilder;
 	private DocumentLabelBuilder documentLabelBuilder;
 	private String rootNodeKeyProperty;
+	/**
+	 * True if the system log the discard event
+	 */
+	private boolean logDiscard;
 
 	/**
 	 * @return the rootNodeKeyProperty
@@ -130,4 +134,12 @@ public class DocumentGrapherExecutionContext {
 		this.documentRelationBuilder = documentRelationBuilder;
 	}
 
+	public boolean isLogDiscard() {
+		return logDiscard;
+	}
+
+	public void setLogDiscard(boolean logDiscard) {
+		this.logDiscard = logDiscard;
+	}
+	
 }

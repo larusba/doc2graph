@@ -175,7 +175,7 @@ public class JsonHelperDefaultTest {
 		Record single = result.single();
 		Assert.assertEquals("Wrong node","Genesis", single.get("art.name").asString());
 		Assert.assertEquals("Wrong inner node","From Genesis to Revelation", single.get("alb.title").asString());
-		Assert.assertEquals("Wrong inner node","artist_album", single.get("r").asRelationship().type());
+		Assert.assertEquals("Wrong inner node","HAS_ALBUM", single.get("r").asRelationship().type());
 
 	}
 	
@@ -218,13 +218,13 @@ public class JsonHelperDefaultTest {
 		Record genesis = list.get(0);
 		Assert.assertEquals("Wrong node","Genesis", genesis.get("art.name").asString());
 		Assert.assertEquals("Wrong inner node","From Genesis to Revelation", genesis.get("alb.title").asString());
-		Assert.assertEquals("Wrong inner node","artist_album", genesis.get("r").asRelationship().type());
+		Assert.assertEquals("Wrong inner node","HAS_ALBUM", genesis.get("r").asRelationship().type());
 		Assert.assertEquals("docKeys errato",1, genesis.get("r.docKeys").asList().size());
 
 		Record king = list.get(1);
 		Assert.assertEquals("Wrong node","King Crimson", king.get("art.name").asString());
 		Assert.assertEquals("Wrong inner node","From Genesis to Revelation", king.get("alb.title").asString());
-		Assert.assertEquals("Wrong inner node","artist_album", king.get("r").asRelationship().type());
+		Assert.assertEquals("Wrong inner node","HAS_ALBUM", king.get("r").asRelationship().type());
 		Assert.assertEquals("docKeys errato",1, king.get("r.docKeys").asList().size());
 		
 		Assert.assertTrue(genesis.get("r.docKeys").asList().contains("genesis"));
@@ -365,7 +365,7 @@ public class JsonHelperDefaultTest {
 		Record single = result.single();
 		Assert.assertEquals("Wrong node","Genesis", single.get("a.name").asString());
 		Assert.assertEquals("Wrong inner node","England", single.get("o.country").asString());
-		Assert.assertEquals("Wrong inner node","artist_origin", single.get("r").asRelationship().type());
+		Assert.assertEquals("Wrong inner node","HAS_ORIGIN", single.get("r").asRelationship().type());
 	}
 
 	@Test
@@ -394,13 +394,13 @@ public class JsonHelperDefaultTest {
 		Record single = result.single();
 		Assert.assertEquals("Wrong node","Genesis", single.get("art.name").asString());
 		Assert.assertEquals("Wrong inner node","From Genesis to Revelation", single.get("alb.title").asString());
-		Assert.assertEquals("Wrong inner node","artist_album", single.get("r").asRelationship().type());
+		Assert.assertEquals("Wrong inner node","HAS_ALBUM", single.get("r").asRelationship().type());
 		
 		StatementResult result1 = session.run("MATCH (alb {type: 'album'}) - [r] -> (tra {type: 'track'}) RETURN alb.title, tra.title,r");
 		Record single1 = result1.single();
 		Assert.assertEquals("Wrong album node","From Genesis to Revelation", single1.get("alb.title").asString());
 		Assert.assertEquals("Wrong track node","Where the Sour Turns to Sweet", single1.get("tra.title").asString());
-		Assert.assertEquals("Wrong inner node","album_track", single1.get("r").asRelationship().type());
+		Assert.assertEquals("Wrong inner node","HAS_TRACK", single1.get("r").asRelationship().type());
 	}
 	
 	@Test

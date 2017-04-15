@@ -22,8 +22,8 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.helpers.json.config.JsonHelperConfiguration;
 import org.neo4j.helpers.json.document.context.DocumentGrapherExecutionContext;
 import org.neo4j.helpers.json.document.impl.DocumentIdBuilderTypeId;
-import org.neo4j.helpers.json.document.impl.DocumentLabelBuilderConstant;
-import org.neo4j.helpers.json.document.impl.DocumentRelationBuilderTypeArrayKey;
+import org.neo4j.helpers.json.document.impl.DocumentLabelBuilderByType;
+import org.neo4j.helpers.json.document.impl.DocumentRelationBuilderHasTypeArrayKey;
 import org.neo4j.logging.Log;
 
 /**
@@ -43,16 +43,17 @@ public class JsonHelperConfigurationDefault extends JsonHelperConfiguration {
 		context.setRootNodeKeyProperty("_document_key");
 		context.setDocumentIdBuilder(new DocumentIdBuilderTypeId());
 		
-		DocumentRelationBuilderTypeArrayKey relBuilder = new DocumentRelationBuilderTypeArrayKey();
+		DocumentRelationBuilderHasTypeArrayKey relBuilder = new DocumentRelationBuilderHasTypeArrayKey();
 		relBuilder.setDb(db);
 		relBuilder.setLog(log);
 		
 		context.setDocumentRelationBuilder(relBuilder);
-		DocumentLabelBuilderConstant documentLabelBuilder = new DocumentLabelBuilderConstant();
+		DocumentLabelBuilderByType documentLabelBuilder = new DocumentLabelBuilderByType();
 		documentLabelBuilder.setDefaultLabel("DocNode");
 		context.setDocumentLabelBuilder(documentLabelBuilder);
 		context.setDb(db);
 		context.setLog(log);
+		context.setLogDiscard(false);
 		
 		return context;
 	}

@@ -53,6 +53,7 @@ public class DocumentGrapherRecursive implements DocumentGrapher {
 	private DocumentRelationBuilder documentRelationBuilder;
 	private DocumentLabelBuilder documentLabelBuilder;
 	private String rootNodeKeyProperty;
+	private boolean logDiscadEvent;
 
 	/**
 	 * Init with context/configuration
@@ -63,8 +64,9 @@ public class DocumentGrapherRecursive implements DocumentGrapher {
 		this.log = context.getLog();
 		this.documentIdBuilder = context.getDocumentIdBuilder();
 		this.documentRelationBuilder = context.getDocumentRelationBuilder();
-		documentLabelBuilder = context.getDocumentLabelBuilder();
-		rootNodeKeyProperty = context.getRootNodeKeyProperty();
+		this.documentLabelBuilder = context.getDocumentLabelBuilder();
+		this.rootNodeKeyProperty = context.getRootNodeKeyProperty();
+		this.logDiscadEvent = context.isLogDiscard();
 	}
 
 	/**
@@ -249,7 +251,9 @@ public class DocumentGrapherRecursive implements DocumentGrapher {
 			result.childrenNodes.add(child);
 		}catch(Exception e)
 		{
-			log.info("Discard document "+inner+": "+e.getMessage());
+			if(logDiscadEvent){
+				log.info("Discard document "+inner+": "+e.getMessage());				
+			}
 		}
 	}
 

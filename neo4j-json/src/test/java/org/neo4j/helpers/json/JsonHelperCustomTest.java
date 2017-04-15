@@ -89,6 +89,7 @@ public class JsonHelperCustomTest {
 				+ ",document_id_builder:'org.neo4j.helpers.json.document.impl.DocumentIdBuilderId'"
 				+ ",document_relation_builder:'org.neo4j.helpers.json.document.impl.DocumentRelationBuilderByKey'"  
 				+ ",document_label_builder:'org.neo4j.helpers.json.document.impl.DocumentLabelBuilderById'"
+				+ ",log_discard_events: true"
 				+ "})");
 	}
 

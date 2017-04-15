@@ -18,7 +18,7 @@
  */
 package org.neo4j.helpers.json.config;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 
 import org.easymock.EasyMockRunner;
@@ -33,8 +33,8 @@ import org.neo4j.graphdb.Label;
 import org.neo4j.helpers.json.document.DocumentRelationBuilder;
 import org.neo4j.helpers.json.document.context.DocumentGrapherExecutionContext;
 import org.neo4j.helpers.json.document.impl.DocumentIdBuilderTypeId;
-import org.neo4j.helpers.json.document.impl.DocumentLabelBuilderConstant;
-import org.neo4j.helpers.json.document.impl.DocumentRelationBuilderTypeArrayKey;
+import org.neo4j.helpers.json.document.impl.DocumentLabelBuilderByType;
+import org.neo4j.helpers.json.document.impl.DocumentRelationBuilderHasTypeArrayKey;
 import org.neo4j.logging.Log;
 
 /**
@@ -106,7 +106,7 @@ public class JsonHelperConfigurationDefaultTest {
 		Assert.assertTrue(ctx.getLog() == log);
 		Assert.assertEquals("_document_key",ctx.getRootNodeKeyProperty());
 		Assert.assertTrue(ctx.getDocumentIdBuilder() instanceof DocumentIdBuilderTypeId);
-		Assert.assertTrue(ctx.getDocumentLabelBuilder() instanceof DocumentLabelBuilderConstant);
-		Assert.assertTrue(ctx.getDocumentRelationBuilder() instanceof DocumentRelationBuilderTypeArrayKey);
+		Assert.assertTrue(ctx.getDocumentLabelBuilder() instanceof DocumentLabelBuilderByType);
+		Assert.assertTrue(ctx.getDocumentRelationBuilder() instanceof DocumentRelationBuilderHasTypeArrayKey);
 	}
 }

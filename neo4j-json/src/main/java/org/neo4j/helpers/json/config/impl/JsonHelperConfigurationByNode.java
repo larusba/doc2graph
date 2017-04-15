@@ -52,6 +52,7 @@ public class JsonHelperConfigurationByNode extends JsonHelperConfiguration {
 		this.configuration.put("document_relation_builder", String.valueOf(confNode.getProperty("document_relation_builder")));
 		this.configuration.put("document_label_builder", String.valueOf(confNode.getProperty("document_label_builder")));
 		this.configuration.put("document_default_label", String.valueOf(confNode.getProperty("document_default_label")));
+		this.configuration.put("log_discard_events", String.valueOf(confNode.getProperty("log_discard_events")));
 	}
 
 	/*
@@ -70,6 +71,7 @@ public class JsonHelperConfigurationByNode extends JsonHelperConfiguration {
 		String docRelBuilderString = this.configuration.get("document_relation_builder");
 		String docLabelBuilderString = this.configuration.get("document_label_builder");
 		String defaultLabel = this.configuration.get("document_default_label");
+		String logDiscardEvent = this.configuration.get("log_discard_events");
 		
 		context.setRootNodeKeyProperty(keyProperty);
 		
@@ -86,7 +88,8 @@ public class JsonHelperConfigurationByNode extends JsonHelperConfiguration {
 		context.setDocumentLabelBuilder(documentLabelBuilder);
 		context.setDb(db);
 		context.setLog(log);
-
+		context.setLogDiscard(Boolean.getBoolean(logDiscardEvent));
+		
 		return context;
 	}
 
