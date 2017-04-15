@@ -64,14 +64,25 @@ public class DocumentRelationBuilderTypeArrayKey implements DocumentRelationBuil
 		this.log = log;
 	}
 
+	/**
+	 * Compose the type of the relationship
+	 * @param parent
+	 * @param child
+	 * @param context
+	 * @return
+	 */
+	protected String buildRelationName(Node parent, Node child, DocumentRelationContext context){
+		String parentType = (String) parent.getProperty("type");
+		String childType = (String) child.getProperty("type");
+		return parentType+"_"+childType;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.neo4j.helpers.json.document.DocumentRelationBuilder#buildRelation(org.neo4j.graphdb.Node, org.neo4j.graphdb.Node, org.neo4j.helpers.json.document.DocumentRelationContext)
 	 */
 	@Override
 	public Relationship buildRelation(Node parent, Node child, DocumentRelationContext context) {
-		String parentType = (String) parent.getProperty("type");
-		String childType = (String) child.getProperty("type");
-		String relationName = parentType+"_"+childType;
+		String relationName = buildRelationName(parent, child, context);
 		
 		RelationshipType type = RelationshipType.withName( relationName );
 		
