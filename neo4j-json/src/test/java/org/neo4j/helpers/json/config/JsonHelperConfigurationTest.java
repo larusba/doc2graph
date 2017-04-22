@@ -21,6 +21,9 @@ package org.neo4j.helpers.json.config;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
 import org.easymock.MockType;
@@ -59,13 +62,22 @@ public class JsonHelperConfigurationTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		Map<String, Object> allProps = new HashMap<>();
+		allProps.put("configuration", "byNode");
+		allProps.put("root_node_key_property", "_root_");
+		allProps.put("document_id_builder", "org.neo4j.helpers.json.document.impl.DocumentIdBuilderId");
+		allProps.put("document_relation_builder", "org.neo4j.helpers.json.document.impl.DocumentRelationBuilderByKey");
+		allProps.put("document_label_builder", "org.neo4j.helpers.json.document.impl.DocumentLabelBuilderById");
+		
 		JsonHelperConfiguration.reset();
+		expect(confNode.getAllProperties()).andStubReturn(allProps);
+		/*
 		expect(confNode.getProperty("configuration")).andStubReturn("byNode");
 		expect(confNode.getProperty("root_node_key_property")).andStubReturn("_root_");
 		expect(confNode.getProperty("document_id_builder")).andStubReturn("org.neo4j.helpers.json.document.impl.DocumentIdBuilderId");
 		expect(confNode.getProperty("document_relation_builder")).andStubReturn("org.neo4j.helpers.json.document.impl.DocumentRelationBuilderByKey");
 		expect(confNode.getProperty("document_label_builder")).andStubReturn("org.neo4j.helpers.json.document.impl.DocumentLabelBuilderById");		
-		
+		*/
 		expect(db.findNode(Label.label("JSON_CONFIG"), "configuration", "byNode")).andReturn(confNode);
 		replay(db,log, confNode);
 	}

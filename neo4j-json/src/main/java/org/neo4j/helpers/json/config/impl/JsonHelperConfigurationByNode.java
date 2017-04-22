@@ -47,12 +47,9 @@ public class JsonHelperConfigurationByNode extends JsonHelperConfiguration {
 	public JsonHelperConfigurationByNode(Node confNode) {
 		super();
 		this.configuration = new HashMap<>();
-		this.configuration.put("root_node_key_property", String.valueOf(confNode.getProperty("root_node_key_property")));
-		this.configuration.put("document_id_builder", String.valueOf(confNode.getProperty("document_id_builder")));
-		this.configuration.put("document_relation_builder", String.valueOf(confNode.getProperty("document_relation_builder")));
-		this.configuration.put("document_label_builder", String.valueOf(confNode.getProperty("document_label_builder")));
-		this.configuration.put("document_default_label", String.valueOf(confNode.getProperty("document_default_label")));
-		this.configuration.put("log_discard_events", String.valueOf(confNode.getProperty("log_discard_events")));
+		confNode.getAllProperties().entrySet().forEach(es -> {
+			this.configuration.put(es.getKey(), String.valueOf(es.getValue()));
+		});
 	}
 
 	/*
@@ -76,6 +73,7 @@ public class JsonHelperConfigurationByNode extends JsonHelperConfiguration {
 		context.setRootNodeKeyProperty(keyProperty);
 		
 		DocumentIdBuilder documentIdBuilder = (DocumentIdBuilder) newInstance(docIdBuilderString);
+		documentIdBuilder.init(configuration);
 		context.setDocumentIdBuilder(documentIdBuilder);
 		
 		DocumentRelationBuilder documentRelationBuilder = (DocumentRelationBuilder) newInstance(docRelBuilderString);

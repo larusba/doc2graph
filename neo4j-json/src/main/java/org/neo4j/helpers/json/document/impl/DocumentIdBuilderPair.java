@@ -26,12 +26,15 @@ import org.neo4j.helpers.json.document.DocumentId;
 import org.neo4j.helpers.json.document.DocumentIdBuilder;
 
 /**
- * Build {@link DocumentIdTypeId}
+ * Build {@link DocumentIdPair}
  * @author Omar Rampado
  *
  */
-public class DocumentIdBuilderTypeId implements DocumentIdBuilder {
+public class DocumentIdBuilderPair implements DocumentIdBuilder {
 
+	private String key1;
+	private String key2;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -40,19 +43,19 @@ public class DocumentIdBuilderTypeId implements DocumentIdBuilder {
 	 */
 	@Override
 	public DocumentId buildId(Map<String,Object> obj) {
-		Object typeObj = obj.get(DocumentIdTypeId.TYPE);
-		Object idObj = obj.get(DocumentIdTypeId.ID);
+		Object obj1 = obj.get(this.key1);
+		Object obj2 = obj.get(this.key2);
 
-		Validate.notNull(typeObj, "every object must have "+DocumentIdTypeId.TYPE+": "+obj);
-		Validate.notNull(idObj, "every object must have "+DocumentIdTypeId.ID+": "+obj);
+		Validate.notNull(obj1, "every object must have "+this.key1+": "+obj);
+		Validate.notNull(obj2, "every object must have "+this.key2+": "+obj);
 		
-		return new DocumentIdTypeId(typeObj, idObj);
+		return new DocumentIdPair(key1, key2, obj1, obj2);
 	}
 
 	@Override
 	public void init(Map<String, String> configuration) {
-		// nothing to configure
-		
+		this.key1 = configuration.get("builder_id_pair_key1");
+		this.key2 = configuration.get("builder_id_pair_key2");
 	}
 
 }

@@ -35,4 +35,10 @@ public interface DocumentIdBuilder {
 	 * @return
 	 */
 	DocumentId buildId(Map<String,Object> obj);
+	
+	/**
+	 * Configure the builder with parameters
+	 * @param configuration
+	 */
+	void init(Map<String, String> configuration);
 }

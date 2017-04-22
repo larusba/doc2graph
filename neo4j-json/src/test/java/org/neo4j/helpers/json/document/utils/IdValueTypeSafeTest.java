@@ -62,6 +62,12 @@ public class IdValueTypeSafeTest {
 		Assert.assertEquals("1", value.toCypher());
 	}
 	
+	@Test
+	public void testToCypherStringApix() {
+		value = new IdValueTypeSafe("I'm you're");
+		Assert.assertEquals("'I\\\'m you\\\'re'", value.toCypher());
+	}
+	
 	/**
 	 * Test method for {@link org.neo4j.helpers.json.document.utils.IdValueTypeSafe#isString()}.
 	 */
@@ -133,7 +139,7 @@ public class IdValueTypeSafeTest {
 		value = new IdValueTypeSafe("1");
 		Assert.assertEquals("1", value.toString());
 	}
-
+	
 	@Test
 	public void testToStringLong() {
 		value = new IdValueTypeSafe(1L);

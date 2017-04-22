@@ -50,6 +50,9 @@ It's the name of class that implements `org.neo4j.helpers.json.document.Document
 You can choose from:
 * `org.neo4j.helpers.json.document.impl.DocumentIdBuilderTypeId`
 * `org.neo4j.helpers.json.document.impl.DocumentIdBuilderId`
+* `org.neo4j.helpers.json.document.impl.DocumentIdBuilderPair` with properties:
+	** `builder_id_pair_key1`
+	** `builder_id_pair_key2`
 * your own implementation
  
 

@@ -48,7 +48,7 @@ public class IdValueTypeSafe {
 	public String toCypher(){
 		if(isString())
 		{
-			return "'"+toString()+"'";
+			return "'"+toString().replaceAll("'", "\\\\'")+"'";
 		}
 		return toString();
 	}

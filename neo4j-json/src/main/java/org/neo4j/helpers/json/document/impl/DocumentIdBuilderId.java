@@ -47,4 +47,9 @@ public class DocumentIdBuilderId implements DocumentIdBuilder {
 		return new DocumentIdId(idObj);
 	}
 
+	@Override
+	public void init(Map<String, String> configuration) {
+		//nothing to configure
+	}
+
 }
