@@ -27,7 +27,7 @@ CREATE (n:JSON_CONFIG {
         ,document_id_builder:'org.neo4j.helpers.json.document.impl.DocumentIdBuilderTypeId'
         ,document_relation_builder:'org.neo4j.helpers.json.document.impl.DocumentRelationBuilderHasTypeArrayKey'
         ,document_label_builder:'org.neo4j.helpers.json.document.impl.DocumentLabelBuilderByType'
-		,log_discard_events: false
+	,log_discard_events: false
         })
 ```
 
@@ -51,8 +51,8 @@ You can choose from:
 * `org.neo4j.helpers.json.document.impl.DocumentIdBuilderTypeId`
 * `org.neo4j.helpers.json.document.impl.DocumentIdBuilderId`
 * `org.neo4j.helpers.json.document.impl.DocumentIdBuilderPair` with properties:
-	** `builder_id_pair_key1`
-	** `builder_id_pair_key2`
+  * `builder_id_pair_key1`
+  * `builder_id_pair_key2`
 * your own implementation
  
 
@@ -81,7 +81,7 @@ TODO
 
 ## License
 
-Copyright (c) 2016 [LARUS Business Automation](http://www.larus-ba.it)
+Copyright (c) 2017 [LARUS Business Automation](http://www.larus-ba.it)
 
 This file is part of the "LARUS Integration Framework for Neo4j".
 
