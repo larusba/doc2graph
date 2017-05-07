@@ -1,5 +1,5 @@
 # mongodb-neo4j-connector
-It's a `doc_manager` module for [mongodb-connector](https://neo4j.com/blog/neo4j-3-0-milestone-1-release/) that call `neo4j-json`'s procedures. 
+It's a `doc_manager` module for [mongodb-connector](https://github.com/mongodb-labs/mongo-connector) that call `neo4j-json`'s procedures. 
 
 # Installation
 You must have Python installed in order to use this project. Python 3 is recommended.
