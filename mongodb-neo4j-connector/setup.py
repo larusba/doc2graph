@@ -25,7 +25,7 @@ except IOError:
 packages = ["mongo_connector", "mongo_connector.doc_managers"]
 package_metadata = {
     "name": "neo4j-json-doc-manager",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "Neo4j Json Doc manager for Mongo Connector",
     "long_description": "Neo4j Json Doc Manager is a tool that will import data from Mongodb to a " 
                         "Neo4j graph structure, via Mongo-Connector, using doc2graph way.",
