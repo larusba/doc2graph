@@ -7,7 +7,7 @@
 
 
 	<properties>
-		<neo4j.version>3.0.6</neo4j.version>
+		<neo4j.version>3.5.0</neo4j.version>
 	</properties>
 
 	<dependencies>
